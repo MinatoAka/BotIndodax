@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 type State struct {
@@ -110,4 +111,26 @@ func formatQty(qty float64) string {
 	formatted := fmt.Sprintf("%.8f", qty)
 	formatted = strings.TrimRight(formatted, "0")
 	return strings.TrimRight(formatted, ".")
+}
+
+func countdown(d time.Duration) {
+	endTime := time.Now().Add(d)
+	
+	log.Printf("⏳ Menunggu %s untuk iterasi berikutnya...", d.String())
+
+	for {
+		remaining := time.Until(endTime)
+		if remaining <= 0 {
+			fmt.Println("\n✅ Waktu tunggu selesai. Lanjut cek pasar...")
+			break
+		}
+
+		hours := int(remaining.Hours())
+		minutes := int(remaining.Minutes()) % 60
+		seconds := int(remaining.Seconds()) % 60
+
+		fmt.Printf("\r⏳ Sisa waktu: %02d:%02d:%02d ", hours, minutes, seconds)
+		
+		time.Sleep(1 * time.Second)
+	}
 }
