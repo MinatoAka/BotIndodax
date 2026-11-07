@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"sort"
+	"fmt"
 	"strings"
 )
 
@@ -73,4 +74,14 @@ func buildQueryString(params map[string]string) string {
 
 func normalizeText(s string) string {
 	return strings.ToLower(strings.TrimSpace(s))
+}
+
+func formatQty(qty float64) string {
+	if qty <= 0 {
+		return "0"
+	}
+	str := fmt.Sprintf("%.8f", qty)
+	str = strings.TrimRight(str, "0")
+	str = strings.TrimRight(str, ".")
+	return str
 }
