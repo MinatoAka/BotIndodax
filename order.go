@@ -61,8 +61,6 @@ func kirimOrder(config Config, side string, price float64, qty float64) (OrderRe
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		// A timeout or connection loss can happen after the exchange accepted the order.
-		// The caller must stop rather than blindly submitting a duplicate order.
 		return OrderResult{}, fmt.Errorf("order request outcome is unknown; reconcile the order in Indodax before restarting: %w", err)
 	}
 	defer resp.Body.Close()
