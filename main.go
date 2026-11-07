@@ -59,7 +59,9 @@ func main() {
 				} else {
 					// EKSEKUSI
 					if isBuySignal && idrSaldo >= config.ModalPerTrade {
-						qty := config.ModalPerTrade / hargaSekarang
+						rawQty := config.ModalPerTrade / hargaSekarang
+						qtyStr := formatQty(rawQty) 
+						qty, _ := strconv.ParseFloat(qtyStr, 64)
 						if qty >= config.MinQty {
 							if kirimOrder(config, "BUY", hargaSekarang, qty) {
 								state.Status = "PEGANG"
