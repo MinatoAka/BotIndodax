@@ -1,0 +1,11 @@
+{
+  "apiKey": "ISI_API_KEY_LO",
+  "secretKey": "ISI_SECRET_KEY_LO",
+  "pair": "ethidr",
+  "buyTrigger": 41333000,
+  "sellTrigger": 42572990,
+  "modalPerTrade": 15000,
+  "minQty": 0.0001,
+  "cooldownMs": 1800000,
+  "maxDailyTrades": 6
+}
