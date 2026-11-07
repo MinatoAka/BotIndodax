@@ -163,6 +163,12 @@ Ini adalah perilaku manajemen baterai Android. Pastikan Anda sudah menjalankan p
 
 Jangan pernah membagikan API key atau secret key saat meminta bantuan.
 
+## Dukungan (Support)
+
+Jika proyek ini bermanfaat dan membantu Anda, Anda bisa mentraktir saya secangkir kopi untuk mendukung pengembangan selanjutnya. Terima kasih!
+
+[☕ Dukung via Saweria](https://saweria.co/AKaAturDompet)
+
 ## Disclaimer
 Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi.
 Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
