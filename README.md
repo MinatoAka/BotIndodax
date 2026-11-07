@@ -139,7 +139,7 @@ Struktur project
 BotIndodax/
 ├── README.md
 ├── config.go       # pemuatan dan validasi konfigurasi
-├── config.json     # konfigurasi lokal dan kredensial (Tidak di-push ke Git)
+├── config.json     # konfigurasi lokal dan kredensial
 ├── go.mod          # Definisi Go module
 ├── main.go         # loop utama dan keputusan transaksi
 ├── market.go       # ticker dan saldo melalui API
