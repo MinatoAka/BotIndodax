@@ -2,7 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
+	"math"
+	"os"
+	"strings"
 )
 
 type Config struct {
@@ -19,13 +22,48 @@ type Config struct {
 
 func loadConfig(filename string) (Config, error) {
 	var config Config
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
+		return config, fmt.Errorf("read config: %w", err)
+	}
+	if err := json.Unmarshal(data, &config); err != nil {
+		return config, fmt.Errorf("parse config: %w", err)
+	}
+
+	config.ApiKey = strings.TrimSpace(config.ApiKey)
+	config.SecretKey = strings.TrimSpace(config.SecretKey)
+	config.Pair = strings.ToLower(strings.TrimSpace(config.Pair))
+	if err := config.validate(); err != nil {
 		return config, err
 	}
-	err = json.Unmarshal(data, &config)
-	
-	config.Pair = normalizeText(config.Pair)
-	
-	return config, err
+	return config, nil
+}
+
+func (c Config) validate() error {
+	if c.ApiKey == "" || c.SecretKey == "" {
+		return fmt.Errorf("apiKey dan secretKey wajib diisi")
+	}
+	if !strings.HasSuffix(c.Pair, "idr") || len(c.Pair) <= len("idr") {
+		return fmt.Errorf("pair harus berupa pair IDR yang valid, misalnya ethidr")
+	}
+	if !isFinitePositive(c.BuyTrigger) || !isFinitePositive(c.SellTrigger) {
+		return fmt.Errorf("buyTrigger dan sellTrigger harus berupa angka positif")
+	}
+	if c.SellTrigger <= c.BuyTrigger {
+		return fmt.Errorf("sellTrigger harus lebih tinggi dari buyTrigger")
+	}
+	if !isFinitePositive(c.ModalPerTrade) || !isFinitePositive(c.MinQty) {
+		return fmt.Errorf("modalPerTrade dan minQty harus berupa angka positif")
+	}
+	if c.CooldownMs < 0 {
+		return fmt.Errorf("cooldownMs tidak boleh negatif")
+	}
+	if c.MaxDailyTrades <= 0 {
+		return fmt.Errorf("maxDailyTrades harus lebih besar dari 0")
+	}
+	return nil
+}
+
+func isFinitePositive(value float64) bool {
+	return value > 0 && !math.IsNaN(value) && !math.IsInf(value, 0)
 }

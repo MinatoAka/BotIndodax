@@ -2,93 +2,125 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
+const stateFile = "state.json"
+
 func main() {
-	fmt.Println("🤖 Bot Aji Mumpung (Modular Version) Menyala!")
+	log.Println("BotIndodax starting")
+	config, err := loadConfig("config.json")
+	if err != nil {
+		log.Printf("Konfigurasi tidak valid: %v", err)
+		return
+	}
 
 	for {
-		// 1. Baca Config & State
-		config, err := loadConfig("config.json")
+		state, err := loadState(stateFile)
 		if err != nil {
-			fmt.Println("❌ Gagal baca config.json:", err)
-			time.Sleep(1 * time.Minute)
-			continue
+			log.Printf("State tidak dapat dibaca; bot dihentikan demi keamanan: %v", err)
+			return
 		}
 
-		state, _ := loadState("state.json")
-
-		// 2. Ambil Harga
-		hargaSekarang, err := getTickerPrice(config.Pair)
+		price, err := getTickerPrice(config.Pair)
 		if err != nil {
-			fmt.Println("❌ Gagal ambil harga:", err)
+			log.Printf("Gagal mengambil harga: %v", err)
 			time.Sleep(5 * time.Minute)
 			continue
 		}
+		log.Printf("Pair=%s | Harga=Rp %.0f | Status=%s", strings.ToUpper(config.Pair), price, state.Status)
 
-		fmt.Printf("📝 Log: Pair=%s | Harga=Rp %.0f | Status=%s\n", strings.ToUpper(config.Pair), hargaSekarang, state.Status)
-
-		// 3. Cek Sinyal
-		isBuySignal := state.Status == "KOSONG" && hargaSekarang <= config.BuyTrigger
-		isSellSignal := state.Status == "PEGANG" && hargaSekarang >= config.SellTrigger
-
-		if !isBuySignal && !isSellSignal {
-			fmt.Println("🟡 Sabar bos kita tunggu momen yang pas...")
-		} else {
-			fmt.Println("🔔 Sinyal terdeteksi! Mengecek saldo...")
-			idrSaldo, asetSaldo, err := getBalances(config)
+		buySignal := state.Status == "KOSONG" && price <= config.BuyTrigger
+		sellSignal := state.Status == "PEGANG" && price >= config.SellTrigger
+		if buySignal || sellSignal {
+			idrBalance, assetBalance, err := getBalances(config)
 			if err != nil {
-				fmt.Println("❌ Gagal ambil saldo:", err)
+				log.Printf("Gagal mengambil saldo; tidak ada order yang dikirim: %v", err)
 			} else {
-				// Cek Cooldown & Daily Limit
-				now := time.Now().UnixMilli()
-				today := time.Now().Format("2006-01-02")
+				now := time.Now()
+				today := now.Format("2006-01-02")
 				if state.LastTradeDay != today {
 					state.DailyTrades = 0
 				}
+				nowMillis := now.UnixMilli()
+				cooldownActive := state.LastTradeAt > 0 && nowMillis-state.LastTradeAt < config.CooldownMs
+				limitReached := state.DailyTrades >= config.MaxDailyTrades
 
-				isCooldown := (now - state.LastTradeAt) < config.CooldownMs
-				isLimitReached := state.DailyTrades >= config.MaxDailyTrades
-
-				if isCooldown {
-					fmt.Println("🛡️ Cooldown aktif, belum bisa trade.")
-				} else if isLimitReached {
-					fmt.Println("🛡️ Limit harian tercapai.")
-				} else {
-					// EKSEKUSI
-					if isBuySignal && idrSaldo >= config.ModalPerTrade {
-						rawQty := config.ModalPerTrade / hargaSekarang
-						qtyStr := formatQty(rawQty) 
-						qty, _ := strconv.ParseFloat(qtyStr, 64)
-						if qty >= config.MinQty {
-							if kirimOrder(config, "BUY", hargaSekarang, qty) {
-								state.Status = "PEGANG"
-								state.LastTradeAt = now
-								state.DailyTrades++
-								state.LastTradeDay = today
-								saveState("state.json", state)
-							}
-						} else {
-							fmt.Println("⚠️ Qty di bawah minimum Indodax.")
+				switch {
+				case cooldownActive:
+					log.Println("Cooldown aktif; order dilewati")
+				case limitReached:
+					log.Println("Batas transaksi harian tercapai; order dilewati")
+				case buySignal && idrBalance < config.ModalPerTrade:
+					log.Println("Saldo IDR tidak cukup; order dilewati")
+				case buySignal:
+					qty := config.ModalPerTrade / price
+					qty, err = parseFormattedQty(qty)
+					if err != nil {
+						log.Printf("Kuantitas pembelian tidak valid: %v", err)
+					} else if qty < config.MinQty {
+						log.Println("Kuantitas di bawah minimum yang dikonfigurasi")
+					} else {
+						result, orderErr := kirimOrder(config, "BUY", price, qty)
+						if orderErr != nil {
+							log.Printf("Order BUY gagal atau hasilnya tidak pasti; bot dihentikan untuk mencegah duplikasi: %v", orderErr)
+							return
 						}
-					} else if isSellSignal && asetSaldo > 0 {
-						if kirimOrder(config, "SELL", hargaSekarang, asetSaldo) {
-							state.Status = "KOSONG"
-							state.LastTradeAt = now
-							state.DailyTrades++
-							state.LastTradeDay = today
-							saveState("state.json", state)
+						state.LastTradeAt = nowMillis
+						state.DailyTrades++
+						state.LastTradeDay = today
+						if result.ExecutedQty > 0 {
+							state.Status = "PEGANG"
 						}
+						if err := saveState(stateFile, state); err != nil {
+							log.Printf("Order diterima tetapi state gagal disimpan; bot dihentikan, periksa akun dan state manual: %v", err)
+							return
+						}
+						if result.ExecutedQty <= 0 {
+							log.Printf("Order %d diterima tanpa kuantitas eksekusi; bot dihentikan untuk rekonsiliasi manual", result.OrderID)
+							return
+						}
+						log.Printf("Order BUY %d diterima; kuantitas terisi %.8f", result.OrderID, result.ExecutedQty)
 					}
+				case sellSignal && assetBalance <= 0:
+					log.Println("Saldo aset tidak cukup; order dilewati")
+				case sellSignal:
+					result, orderErr := kirimOrder(config, "SELL", price, assetBalance)
+					if orderErr != nil {
+						log.Printf("Order SELL gagal atau hasilnya tidak pasti; bot dihentikan untuk mencegah duplikasi: %v", orderErr)
+						return
+					}
+					state.LastTradeAt = nowMillis
+					state.DailyTrades++
+					state.LastTradeDay = today
+					if result.ExecutedQty >= assetBalance {
+						state.Status = "KOSONG"
+					}
+					if err := saveState(stateFile, state); err != nil {
+						log.Printf("Order diterima tetapi state gagal disimpan; bot dihentikan, periksa akun dan state manual: %v", err)
+						return
+					}
+					if result.ExecutedQty <= 0 {
+						log.Printf("Order %d diterima tanpa kuantitas eksekusi; bot dihentikan untuk rekonsiliasi manual", result.OrderID)
+						return
+					}
+					log.Printf("Order SELL %d diterima; kuantitas terisi %.8f", result.OrderID, result.ExecutedQty)
 				}
 			}
 		}
 
-		// 4. Jeda
-		fmt.Println("⏳ Menunggu 1 jam untuk iterasi berikutnya...\n")
-		time.Sleep(1 * time.Hour)
+		log.Println("Menunggu 1 jam untuk iterasi berikutnya")
+		time.Sleep(time.Hour)
 	}
+}
+
+func parseFormattedQty(qty float64) (float64, error) {
+	parsed, err := strconv.ParseFloat(formatQty(qty), 64)
+	if err != nil || parsed <= 0 {
+		return 0, fmt.Errorf("kuantitas %.8f tidak dapat diformat", qty)
+	}
+	return parsed, nil
 }

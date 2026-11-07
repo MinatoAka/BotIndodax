@@ -5,83 +5,109 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"io/ioutil"
-	"net/url"
-	"sort"
 	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 )
 
-// ==========================================
-// STATE MANAGEMENT
-// ==========================================
 type State struct {
-	Status       string `json:"status"` // "KOSONG" atau "PEGANG"
+	Status       string `json:"status"`
 	LastTradeAt  int64  `json:"lastTradeAt"`
 	DailyTrades  int    `json:"dailyTrades"`
 	LastTradeDay string `json:"lastTradeDay"`
 }
 
 func loadState(filename string) (State, error) {
-	var state State
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
-		return State{Status: "KOSONG"}, nil
+		if os.IsNotExist(err) {
+			return State{Status: "KOSONG"}, nil
+		}
+		return State{}, fmt.Errorf("read state: %w", err)
 	}
-	err = json.Unmarshal(data, &state)
-	
+
+	var state State
+	if err := json.Unmarshal(data, &state); err != nil {
+		return State{}, fmt.Errorf("parse state: %w", err)
+	}
+	state.Status = strings.ToUpper(strings.TrimSpace(state.Status))
 	if state.Status == "" {
 		state.Status = "KOSONG"
-	} else {
-		state.Status = strings.ToUpper(normalizeText(state.Status))
 	}
-	
-	return state, err
+	if state.Status != "KOSONG" && state.Status != "PEGANG" {
+		return State{}, fmt.Errorf("status state tidak dikenal: %q", state.Status)
+	}
+	if state.DailyTrades < 0 || state.LastTradeAt < 0 {
+		return State{}, fmt.Errorf("state berisi nilai transaksi negatif")
+	}
+	return state, nil
 }
 
 func saveState(filename string, state State) error {
-	bytes, err := json.MarshalIndent(state, "", "  ")
+	data, err := json.MarshalIndent(state, "", "  ")
 	if err != nil {
-		return err
+		return fmt.Errorf("encode state: %w", err)
 	}
-	return ioutil.WriteFile(filename, bytes, 0644)
+	if err := os.MkdirAll(filepath.Dir(filename), 0700); err != nil {
+		return fmt.Errorf("create state directory: %w", err)
+	}
+	tempFile, err := os.CreateTemp(filepath.Dir(filename), ".state-*.tmp")
+	if err != nil {
+		return fmt.Errorf("create temporary state file: %w", err)
+	}
+	tempName := tempFile.Name()
+	defer os.Remove(tempName)
+	if err := tempFile.Chmod(0600); err != nil {
+		tempFile.Close()
+		return fmt.Errorf("secure temporary state file: %w", err)
+	}
+	if _, err := tempFile.Write(data); err != nil {
+		tempFile.Close()
+		return fmt.Errorf("write temporary state file: %w", err)
+	}
+	if err := tempFile.Sync(); err != nil {
+		tempFile.Close()
+		return fmt.Errorf("sync temporary state file: %w", err)
+	}
+	if err := tempFile.Close(); err != nil {
+		return fmt.Errorf("close temporary state file: %w", err)
+	}
+	if err := os.Rename(tempName, filename); err != nil {
+		return fmt.Errorf("replace state file: %w", err)
+	}
+	return nil
 }
 
-// ==========================================
-// CRYPTO & UTILS
-// ==========================================
 func getIndodaxSignature(payloadString, secretKey string) string {
 	h := hmac.New(sha256.New, []byte(secretKey))
-	h.Write([]byte(payloadString))
+	_, _ = h.Write([]byte(payloadString))
 	return hex.EncodeToString(h.Sum(nil))
 }
 
 func buildQueryString(params map[string]string) string {
-	var keys []string
-	for k := range params {
-		keys = append(keys, k)
+	keys := make([]string, 0, len(params))
+	for key := range params {
+		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 
-	var queryParts []string
-	for _, k := range keys {
-		if params[k] != "" {
-			queryParts = append(queryParts, url.QueryEscape(k)+"="+url.QueryEscape(params[k]))
+	values := url.Values{}
+	for _, key := range keys {
+		if params[key] != "" {
+			values.Set(key, params[key])
 		}
 	}
-	return strings.Join(queryParts, "&")
-}
-
-func normalizeText(s string) string {
-	return strings.ToLower(strings.TrimSpace(s))
+	return values.Encode()
 }
 
 func formatQty(qty float64) string {
 	if qty <= 0 {
 		return "0"
 	}
-	str := fmt.Sprintf("%.8f", qty)
-	str = strings.TrimRight(str, "0")
-	str = strings.TrimRight(str, ".")
-	return str
+	formatted := fmt.Sprintf("%.8f", qty)
+	formatted = strings.TrimRight(formatted, "0")
+	return strings.TrimRight(formatted, ".")
 }
