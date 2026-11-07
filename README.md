@@ -30,7 +30,7 @@ API key akun Anda secara otomatis.
 - Android dengan Termux dan koneksi internet.
 - Go terpasang (`pkg install golang`).
 - Akun Indodax dan API key TAPI v2 dengan izin baca dan spot trading.
-  Jangan beri izin penarikan.
+  Jangan beri izin penarikan (withdrawal).
 
 ## Instalasi
 
