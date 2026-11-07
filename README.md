@@ -1,93 +1,169 @@
 # BotIndodax
 
-Bot trading Indodax berbasis Go yang dapat dijalankan di Termux. Bot memantau harga pair yang dikonfigurasi dan dapat mengirim **order market sungguhan** melalui API Indodax.
+Bot trading Indodax berbasis Go yang dirancang untuk dijalankan dari terminal Android melalui Termux. Bot memantau satu pair, memeriksa saldo saat sinyal terpenuhi, lalu dapat mengirim order **market sungguhan** ke akun Indodax.
 
-> **Peringatan:** Bot ini dapat menggunakan saldo asli dan menyebabkan kerugian. Periksa kode dan konfigurasi sebelum menjalankannya. Mulai dengan nominal kecil. Jangan pernah membagikan API key atau secret key.
+> [!CAUTION]
+> Bot dapat melakukan transaksi dengan saldo asli. Order market dapat langsung dieksekusi dan menimbulkan kerugian; tidak ada jaminan keuntungan. Tinjau kode dan konfigurasi, uji dengan hati-hati, dan gunakan dana yang siap Anda tanggung risikonya. Jangan pernah mengaktifkan izin penarikan pada API key. Jangan bagikan atau commit API key, secret key, maupun file konfigurasi berisi kredensial.
+
+## Fitur
+
+- Memantau harga ticker untuk pair yang diatur di `config.json`.
+- Membeli ketika status `KOSONG` dan harga berada pada atau di bawah `buyTrigger`.
+- Menjual ketika status `PEGANG` dan harga berada pada atau di atas `sellTrigger`.
+- Menyimpan status dan batas transaksi harian di `state.json`.
+
+Bot memeriksa kondisi setiap satu jam. Ini bukan sistem trading frekuensi tinggi dan bukan layanan yang berjalan di server.
 
 ## Persyaratan
 
-- Android dengan Termux. Disarankan memasang Termux dari sumber resmi seperti F-Droid atau GitHub Termux.
+- Perangkat Android dengan Termux. Pasang Termux dari sumber resmi yang masih dipelihara, seperti F-Droid atau repositori GitHub resmi Termux.
 - Koneksi internet.
-- Akun Indodax dan API key dengan izin yang diperlukan untuk membaca saldo dan melakukan trading. **Jangan aktifkan izin penarikan dana.**
-- Git dan Go di Termux.
+- Akun Indodax dan API key dengan izin baca saldo serta trading. **Jangan beri izin penarikan.**
+- Paket `git` dan `golang` di Termux.
 
-## Instalasi
+## Instalasi di Termux
 
-Buka Termux, lalu jalankan:
+Buka Termux dan jalankan:
 
 ```sh
-pkg update && pkg upgrade
-pkg install git golang
+pkg update
+pkg upgrade
+pkg install git golang nano
 
 git clone https://github.com/MinatoAka/BotIndodax.git
 cd BotIndodax
 ```
 
-## Konfigurasi
-
-Buat salinan file konfigurasi contoh, lalu edit:
+Pastikan Go sudah tersedia:
 
 ```sh
-cp config.json config.local.json
+go version
+```
+
+## Siapkan konfigurasi
+
+Program membaca konfigurasi langsung dari `config.json` pada direktori kerja. Buat cadangan file contoh, kemudian edit file yang dibaca bot:
+
+```sh
+cp config.json config.json.example
 nano config.json
 ```
 
-Isi `apiKey` dan `secretKey` dengan kredensial API Indodax milik Anda. Jangan commit atau membagikan file yang berisi kredensial tersebut.
+Isi `apiKey` dan `secretKey` dengan API key Indodax Anda. Jangan memasukkan spasi tambahan atau mengubah nama field. Contoh struktur (gunakan nilai Anda sendiri; angka di bawah hanya contoh dan **bukan rekomendasi trading**):
 
-| Opsi | Keterangan |
+```json
+{
+  "apiKey": "API_KEY_ANDA",
+  "secretKey": "SECRET_KEY_ANDA",
+  "pair": "ethidr",
+  "buyTrigger": 41333000,
+  "sellTrigger": 42572990,
+  "modalPerTrade": 15000,
+  "minQty": 0.0001,
+  "cooldownMs": 1800000,
+  "maxDailyTrades": 6
+}
+```
+
+| Field | Keterangan |
 | --- | --- |
-| `apiKey` | API key Indodax |
-| `secretKey` | Secret key untuk API key tersebut |
-| `pair` | Pair pasar, misalnya `ethidr` |
-| `buyTrigger` | Bot membeli jika status `KOSONG` dan harga sama dengan atau di bawah nilai ini |
-| `sellTrigger` | Bot menjual jika status `PEGANG` dan harga sama dengan atau di atas nilai ini |
-| `modalPerTrade` | Perkiraan modal IDR untuk setiap pembelian |
-| `minQty` | Jumlah aset minimum agar pembelian diteruskan |
-| `cooldownMs` | Jeda minimum antatransaksi dalam milidetik; `1800000` = 30 menit |
-| `maxDailyTrades` | Batas transaksi harian |
+| `apiKey` | API key Indodax dengan izin yang diperlukan. |
+| `secretKey` | Secret key yang berpasangan dengan API key. Simpan rahasia. |
+| `pair` | Pair pasar, misalnya `ethidr`; gunakan format pair yang didukung API. |
+| `buyTrigger` | Bot mempertimbangkan pembelian jika status `KOSONG` dan harga ticker sama dengan atau lebih rendah dari angka ini. |
+| `sellTrigger` | Bot mempertimbangkan penjualan jika status `PEGANG` dan harga ticker sama dengan atau lebih tinggi dari angka ini. |
+| `modalPerTrade` | Perkiraan jumlah IDR untuk pembelian. Pastikan saldo cukup dan pahami biaya transaksi. |
+| `minQty` | Kuantitas minimum agar bot meneruskan pembelian. |
+| `cooldownMs` | Jeda minimum antara transaksi, dalam milidetik. `1800000` berarti 30 menit. |
+| `maxDailyTrades` | Batas transaksi harian yang dicatat bot. |
 
-Sesuaikan nilai contoh dengan strategi dan toleransi risiko Anda. Pastikan pair, harga pemicu, modal, serta batas transaksi sudah benar sebelum bot dijalankan.
+Sebelum melanjutkan, periksa kembali pair, trigger harga, modal, dan limit. File konfigurasi berisi kredensial dalam teks biasa; jangan unggah, commit, atau kirimkan file tersebut. File `config.json` contoh berada di repository, jadi berhati-hatilah agar perubahan lokal berisi rahasia tidak ikut di-commit.
+
+## Kompilasi di Termux
+
+Pada versi kode saat ini, `order.go` menggunakan `strings` tetapi belum mengimpornya. Tambahkan import tersebut sebelum kompilasi:
+
+```sh
+nano order.go
+```
+
+Di blok `import`, tambahkan baris `"strings"`, lalu simpan (`Ctrl+O`, Enter) dan keluar (`Ctrl+X`). Blok import harus mencakup package berikut:
+
+```go
+import (
+    "bytes"
+    "fmt"
+    "io/ioutil"
+    "math"
+    "net/http"
+    "strconv"
+    "strings"
+    "time"
+)
+```
+
+Kompilasi seluruh file Go menjadi executable bernama `bot`:
+
+```sh
+go build -o bot *.go
+```
+
+Jika berhasil, periksa file hasil kompilasi:
+
+```sh
+ls -l bot
+```
+
+Executable dibuat untuk lingkungan perangkat/arsitektur Termux yang sedang digunakan. Kompilasi ulang setelah memperbarui kode sumber.
 
 ## Menjalankan
 
-> **Catatan kondisi kode saat ini:** beberapa file Go belum mengimpor package yang dipakai. Jika muncul `undefined: strconv` atau `undefined: strings`, tambahkan import yang disebutkan di bagian [Troubleshooting](#troubleshooting) sebelum menjalankan perintah berikut.
+Pastikan masih berada di direktori repository, konfigurasi sudah benar, lalu jalankan:
+
+```sh
+./bot
+```
+
+Atau jalankan tanpa membuat executable terlebih dahulu:
 
 ```sh
 go run *.go
 ```
 
-Bot akan mencetak harga dan status, lalu mengulang pemeriksaan setiap **1 jam**. Biarkan Termux tetap berjalan dan perangkat terhubung ke internet. Android dapat menghentikan aplikasi di latar belakang; pengaturan baterai perangkat mungkin perlu disesuaikan.
+Saat mulai, bot membaca `config.json` dan `state.json`, mengambil harga, serta menampilkan status. Setelah satu putaran, bot menunggu satu jam sebelum pemeriksaan berikutnya. Hentikan dengan `Ctrl+C`.
 
-Hentikan bot dengan `Ctrl+C`.
+Agar proses lebih kecil kemungkinannya dihentikan ketika Termux berada di latar belakang, Anda dapat menjalankan:
 
-## Status bot
+```sh
+termux-wake-lock
+```
 
-Bot menyimpan status transaksi di `state.json` pada direktori kerja saat berjalan. Status awalnya `KOSONG`; setelah pembelian berhasil menjadi `PEGANG`, dan setelah penjualan berhasil kembali menjadi `KOSONG`. Jangan menghapus atau mengubah file ini tanpa memahami dampaknya: status lokal bot bisa tidak sesuai dengan aset yang sebenarnya ada di akun.
+Lepaskan wakelock setelah selesai dengan `termux-wake-unlock`. Pengaturan baterai Android tetap dapat membatasi proses latar belakang; wakelock tidak menjamin bot selalu berjalan. Pastikan koneksi internet dan Termux tetap aktif.
+
+## Status dan perilaku transaksi
+
+`state.json` berada pada direktori kerja saat bot dijalankan. Jika file belum ada atau tidak dapat dibaca, status awal yang digunakan adalah `KOSONG`. Setelah bot menganggap order berhasil dikirim, status berubah menjadi `PEGANG` untuk pembelian atau `KOSONG` untuk penjualan. File ini juga menyimpan waktu transaksi terakhir dan penghitung transaksi harian.
+
+Jangan menghapus atau mengubah `state.json` sembarangan: status lokal yang tidak cocok dengan saldo akun dapat membuat keputusan bot berbeda dari yang diharapkan. Periksa saldo dan riwayat order di Indodax secara mandiri. Batas harian dihitung berdasarkan tanggal lokal perangkat.
 
 ## Troubleshooting
 
-### `undefined: strconv` saat kompilasi
-
-Di `main.go`, tambahkan `"strconv"` ke daftar import.
-
 ### `undefined: strings` saat kompilasi
 
-Di `order.go`, tambahkan `"strings"` ke daftar import.
-
-Setelah memperbaiki import, coba lagi:
+Tambahkan import `"strings"` ke blok import di `order.go` seperti dijelaskan pada bagian kompilasi, lalu ulangi:
 
 ```sh
-go run *.go
+go build -o bot *.go
 ```
 
 ### Gagal membaca `config.json`
 
-Pastikan perintah dijalankan dari direktori `BotIndodax`, dan file `config.json` berisi JSON valid.
+Pastikan perintah dijalankan dari direktori `BotIndodax`, file bernama tepat `config.json`, dan isinya JSON valid. Periksa tanda kutip, koma, serta tipe nilai.
 
 ### Gagal mengambil harga, saldo, atau mengirim order
 
-Periksa koneksi internet, pair, API key, secret key, izin API, dan respons/error yang ditampilkan bot. Jangan mengirimkan kredensial API saat meminta bantuan.
+Periksa internet, pair, waktu perangkat, saldo, izin API, serta pesan dan respons yang ditampilkan. Jangan mengirimkan API key atau secret key saat meminta bantuan. Periksa juga saldo dan riwayat order langsung di akun Indodax; jangan hanya mengandalkan status lokal bot.
 
 ## Disclaimer
 
-Proyek ini disediakan apa adanya, bukan saran investasi dan tanpa jaminan keuntungan. Anda bertanggung jawab atas konfigurasi, keamanan kredensial, dan semua transaksi yang dilakukan akun Anda.
+Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan proses, serta seluruh keputusan dan transaksi pada akun Anda.
