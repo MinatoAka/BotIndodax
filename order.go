@@ -11,6 +11,7 @@ import (
 )
 
 func kirimOrder(config Config, side string, price float64, qty float64) bool {
+	side = strings.ToUpper(normalizeText(side))
 	params := map[string]string{
 		"symbol":     config.Pair,
 		"side":       side,
