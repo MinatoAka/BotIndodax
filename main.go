@@ -113,9 +113,7 @@ func main() {
 				}
 			}
 		}
-
-		log.Println("Menunggu 1 jam untuk iterasi berikutnya...")
-		time.Sleep(time.Hour)
+		countdown(1 * time.Hour)
 	}
 }
 
