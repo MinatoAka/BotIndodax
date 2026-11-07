@@ -52,6 +52,21 @@ cd BotIndodax
 go mod tidy
 ```
 
+## Struktur project
+
+```text
+BotIndodax/
+├── README.md
+├── config.go       # pemuatan dan validasi konfigurasi
+├── config.json     # konfigurasi lokal dan kredensial
+├── go.mod          # Definisi Go module
+├── main.go         # loop utama dan keputusan transaksi
+├── market.go       # ticker dan saldo melalui API
+├── order.go        # pengiriman dan pemeriksaan respons order
+├── utils.go        # state, signature, query string, dan helper kuantitas
+└── utils_test.go   # tes helper (tidak masuk ke binary aplikasi)
+```
+
 ## Konfigurasi
 
 Bot membaca config.json dari direktori kerja. Buka file konfigurasi dan masukkan API key/secret Anda:
@@ -87,9 +102,9 @@ minQty Kuantitas aset minimum sesuai aturan pair.
 cooldownMs Jeda minimum antar transaksi dalam milidetik.
 maxDailyTrades Batas transaksi harian yang dikonfigurasi.
 
-Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax. Jangan unggah atau commit config.json berisi kredensial. Jika kredensial pernah terpublikasi, segera cabut dan buat [...]
+Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax. Jangan unggah atau commit config.json berisi kredensial. Jika kredensial pernah terpublikasi, segera cabut dan buat `APi_KEY`.
 
-Menjalankan pengujian
+## Menjalankan pengujian
 
 Tes ini memeriksa validasi konfigurasi, perilaku pembacaan dan penyimpanan state, serta konsistensi query string. Tes tidak mengirim order ke Indodax.
 
@@ -103,7 +118,7 @@ Jika ingin menjalankan satu tes tertentu:
 go test -run TestBuildQueryStringDeterministic -v
 ```
 
-Build dan menjalankan bot
+## Build dan menjalankan bot
 
 Sangat disarankan untuk melakukan build (compile) menjadi satu binary agar bot berjalan lebih ringan dan hemat RAM di HP.
 
@@ -122,51 +137,20 @@ go run .
 ```
 
 ## ⚠️ PENTING UNTUK ANDROID:
-Jalankan bot dari direktori repository agar config.json dan state.json ditemukan. Sebelum menjalankan bot, sangat disarankan untuk mengetik perintah berikut di Termux agar Android tidak mematikan[...]
+Jalankan bot dari direktori repository agar config.json dan state.json ditemukan.
+Sebelum menjalankan bot, sangat disarankan untuk mengetik perintah berikut di Termux.
 
 ```sh
 termux-wake-lock
 ```
 
-Hentikan bot dengan Ctrl + C.
-
-Bot mengirim order market secara nyata jika sinyal dan batas konfigurasi terpenuhi. Jika request order mengalami timeout atau hasil respons tidak dapat dipastikan, periksa order dan saldo di akun[...]
-
-State transaksi
-
-state.json dibuat secara otomatis saat pertama kali transaksi berhasil disimpan. Jika file belum ada, bot memulai dengan status KOSONG. Jika file ada tetapi tidak valid atau tidak dapat dibaca, b[...]
-
-Status lokal bukan sumber kebenaran saldo atau posisi akun. Periksa akun Indodax secara manual setelah gangguan, order yang hasilnya tidak pasti, atau kegagalan menyimpan state.
-
-Struktur project
-
-```text
-BotIndodax/
-├── README.md
-├── config.go       # pemuatan dan validasi konfigurasi
-├── config.json     # konfigurasi lokal dan kredensial
-├── go.mod          # Definisi Go module
-├── main.go         # loop utama dan keputusan transaksi
-├── market.go       # ticker dan saldo melalui API
-├── order.go        # pengiriman dan pemeriksaan respons order
-├── utils.go        # state, signature, query string, dan helper kuantitas
-└── utils_test.go   # tes helper (tidak masuk ke binary aplikasi)
+Hentikan bot dengan
+```sh
+Ctrl + C.
 ```
-
-## Troubleshooting
-Konfigurasi ditolak
-
-Periksa JSON, API key/secret, pair berakhiran idr, nilai trigger/modal/kuantitas positif, sellTrigger lebih tinggi dari buyTrigger, serta maxDailyTrades lebih besar dari nol.
-
-Gagal membaca harga/saldo atau order
-
-Periksa koneksi internet, waktu perangkat, pair, izin API key, saldo, dan pesan kesalahan API. Jika hasil order tidak pasti, jangan langsung menjalankan ulang bot—periksa riwayat/order dan sald[...]
-
-Bot mati sendiri saat layar HP mati
-
-Ini adalah perilaku manajemen baterai Android. Pastikan Anda sudah menjalankan perintah termux-wake-lock sebelum menjalankan bot.
-
-Jangan pernah membagikan API key atau secret key saat meminta bantuan.
+Bot mengirim order market secara nyata jika sinyal dan batas konfigurasi terpenuhi.
+Jika request order mengalami timeout atau hasil respons tidak dapat dipastikan, 
+periksa order dan saldo di akun indodax anda.
 
 ## Dukungan (Support)
 
