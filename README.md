@@ -160,4 +160,4 @@ Disclaimer
 
 Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
 
-```
+---
