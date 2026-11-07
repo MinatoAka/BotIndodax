@@ -22,9 +22,9 @@ func kirimOrder(config Config, side string, price float64, qty float64) bool {
 
 	if side == "BUY" {
 		quoteAmount := math.Floor(qty * price)
-		params["quoteOrderQty"] = strconv.FormatFloat(quoteAmount, 'f', -1, 64)
+		params["quoteOrderQty"] = fmt.Sprintf("%.0f", quoteAmount)
 	} else {
-		params["quantity"] = strconv.FormatFloat(qty, 'f', 8, 64)
+		params["quantity"] = formatQty(qty)
 	}
 
 	query := buildQueryString(params)
