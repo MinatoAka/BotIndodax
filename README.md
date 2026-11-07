@@ -4,8 +4,8 @@
 # BotIndodax
 
 Bot trading Indodax berbasis Go untuk dijalankan melalui terminal Android (Termux).
-Bot memantau satu pair IDR dan dapat mengirim order `MARKET` bukan `LIMIT`,
-menggunakan API key akun Anda secara otomatis.
+Bot memantau satu pair dan dapat mengirim order `MARKET` bukan `LIMIT` menggunakan
+API key akun Anda secara otomatis.
 
 > [!CAUTION]
 > Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian.
