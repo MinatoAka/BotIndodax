@@ -1,8 +1,5 @@
 [![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
 [![Platform](https://img.shields.io/badge/Platform-Termux-2E8B57?style=for-the-badge&logo=android&logoColor=white)](https://termux.dev/)
-[![Repo Stars](https://img.shields.io/github/stars/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/stargazers)
-[![Issues](https://img.shields.io/github/issues/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/issues)
-[![Last Commit](https://img.shields.io/github/last-commit/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/commits/main)
 [![Support via Saweria](https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://saweria.co/AKaAturDompet)
 ---
 
