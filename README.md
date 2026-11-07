@@ -10,8 +10,8 @@ Bot memantau satu pair IDR dan dapat mengirim order market menggunakan API key a
 > Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian.
 > Tidak ada jaminan keuntungan.
 > Periksa kode, konfigurasi, dan izin API key sebelum menjalankan bot.
-> **Jangan aktifkan izin penarikan (withdrawal) pada API key.
-> **DWYOR (Do With Your Own Risk)
+> Jangan aktifkan izin penarikan (withdrawal) pada API key.
+> DWYOR (Do With Your Own Risk)
 
 ## Fitur
 
