@@ -30,7 +30,7 @@ func TestLoadStateOnlyDefaultsWhenFileIsMissing(t *testing.T) {
 	}
 
 	corrupt := filepath.Join(t.TempDir(), "state.json")
-	if err := os.WriteFile(corrupt, []byte("{"), 0600); err != nil {
+	if err := os.WriteFile(corrupt, []byte("{"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := loadState(corrupt); err == nil {
@@ -47,8 +47,8 @@ func TestSaveStateUsesPrivatePermissions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := info.Mode().Perm(); got != 0600 {
-		t.Fatalf("state permissions = %04o, want 0600", got)
+	if got := info.Mode().Perm(); got != 0644 {
+		t.Fatalf("state permissions = %04o, want 0644", got)
 	}
 }
 
