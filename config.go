@@ -24,5 +24,8 @@ func loadConfig(filename string) (Config, error) {
 		return config, err
 	}
 	err = json.Unmarshal(data, &config)
+	
+	config.Pair = normalizeText(config.Pair)
+	
 	return config, err
 }
