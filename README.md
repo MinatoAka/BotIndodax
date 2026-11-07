@@ -1,9 +1,3 @@
-Siap, Jenderal! Ini dia README.md versi final yang udah disesuaikan 100% dengan kondisi project lo saat ini.
-
-Gue udah ngehapus semua referensi ke GO111MODULE=off (karena sekarang udah pakai go.mod), ngerapiin perintah build/run biar lebih simpel, dan nambahin fitur countdown serta peringatan termux-wake-lock buat Android.
-
-Silakan copy-paste ini ke file README.md lo, lalu langsung push ke GitHub:
-
 ---
 
 ```markdown
