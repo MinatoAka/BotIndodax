@@ -18,8 +18,8 @@ Bot memantau satu pair IDR dan dapat mengirim order market menggunakan API key a
 - Membaca harga ticker dan saldo akun Indodax secara *real-time*.
 - Membeli ketika status lokal `KOSONG` dan harga sama dengan atau di bawah `buyTrigger`.
 - Menjual ketika status lokal `PEGANG` dan harga sama dengan atau di atas `sellTrigger`.
-- Menyimpan status transaksi, waktu transaksi terakhir, dan batas transaksi harian di `state.json` (Anti-Amnesia saat HP mati).
-- Memuat ulang `config.json` di setiap iterasi, memungkinkan Anda mengubah target harga tanpa harus me-restart bot.
+- Menyimpan status transaksi, waktu transaksi terakhir, dan batas transaksi harian di `state.json`.
+- Memuat ulang `config.json` di setiap iterasi.
 - Memvalidasi konfigurasi serta menangani kegagalan API dengan lebih aman (HTTP Timeout).
 - Menghentikan bot bila hasil pengiriman order tidak pasti agar tidak otomatis mengirim order duplikat.
 - Menampilkan *countdown* (hitung mundur) yang informatif di terminal saat menunggu iterasi berikutnya.
