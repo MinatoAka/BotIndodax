@@ -25,13 +25,16 @@ func loadState(filename string) (State, error) {
 	var state State
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		// Kalau file belum ada, return default state
 		return State{Status: "KOSONG"}, nil
 	}
 	err = json.Unmarshal(data, &state)
+	
 	if state.Status == "" {
 		state.Status = "KOSONG"
+	} else {
+		state.Status = strings.ToUpper(normalizeText(state.Status))
 	}
+	
 	return state, err
 }
 
