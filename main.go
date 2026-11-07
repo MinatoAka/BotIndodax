@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -12,13 +11,16 @@ const stateFile = "state.json"
 
 func main() {
 	log.Println("BotIndodax starting")
-	config, err := loadConfig("config.json")
-	if err != nil {
-		log.Printf("Konfigurasi tidak valid: %v", err)
-		return
-	}
 
 	for {
+		// 🟢 FIX: loadConfig ditarik ke dalam loop
+		config, err := loadConfig("config.json")
+		if err != nil {
+			log.Printf("Konfigurasi tidak valid (tunggu 1 menit): %v", err)
+			time.Sleep(1 * time.Minute)
+			continue
+		}
+
 		state, err := loadState(stateFile)
 		if err != nil {
 			log.Printf("State tidak dapat dibaca; bot dihentikan demi keamanan: %v", err)
@@ -112,7 +114,7 @@ func main() {
 			}
 		}
 
-		log.Println("Menunggu 1 jam untuk iterasi berikutnya")
+		log.Println("Menunggu 1 jam untuk iterasi berikutnya...")
 		time.Sleep(time.Hour)
 	}
 }
@@ -120,7 +122,7 @@ func main() {
 func parseFormattedQty(qty float64) (float64, error) {
 	parsed, err := strconv.ParseFloat(formatQty(qty), 64)
 	if err != nil || parsed <= 0 {
-		return 0, fmt.Errorf("kuantitas %.8f tidak dapat diformat", qty)
+		return 0, err
 	}
 	return parsed, nil
 }
