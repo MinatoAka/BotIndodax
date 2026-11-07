@@ -44,7 +44,7 @@ cd BotIndodax
 go mod tidy
 ```
 
-Konfigurasi
+### Konfigurasi
 
 Bot membaca config.json dari direktori kerja. Buka file konfigurasi dan masukkan API key/secret Anda:
 
@@ -145,8 +145,7 @@ BotIndodax/
 └── utils_test.go   # tes helper (tidak masuk ke binary aplikasi)
 ```
 
-Troubleshooting
-
+### Troubleshooting
 Konfigurasi ditolak
 
 Periksa JSON, API key/secret, pair berakhiran idr, nilai trigger/modal/kuantitas positif, sellTrigger lebih tinggi dari buyTrigger, serta maxDailyTrades lebih besar dari nol.
@@ -161,6 +160,6 @@ Ini adalah perilaku manajemen baterai Android. Pastikan Anda sudah menjalankan p
 
 Jangan pernah membagikan API key atau secret key saat meminta bantuan.
 
-Disclaimer
-
-Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
+### Disclaimer
+Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi.
+Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
