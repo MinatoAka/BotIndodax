@@ -67,3 +67,7 @@ func buildQueryString(params map[string]string) string {
 	}
 	return strings.Join(queryParts, "&")
 }
+
+func normalizeText(s string) string {
+	return strings.ToLower(strings.TrimSpace(s))
+}
