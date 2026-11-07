@@ -38,6 +38,21 @@ func TestLoadStateOnlyDefaultsWhenFileIsMissing(t *testing.T) {
 	}
 }
 
+func TestSaveStateUsesPrivatePermissions(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "state.json")
+	if err := saveState(path, State{Status: "KOSONG"}); err != nil {
+		t.Fatal(err)
+	}
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	
+	if got := info.Mode().Perm(); got != 0600 {
+		t.Fatalf("state permissions = %04o, want 0600", got)
+	}
+}
+
 func TestBuildQueryStringDeterministic(t *testing.T) {
 	got := buildQueryString(map[string]string{"z": "last", "a": "first", "empty": ""})
 	if got != "a=first&z=last" {
