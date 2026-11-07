@@ -1,3 +1,8 @@
+[![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
+[![Platform](https://img.shields.io/badge/Platform-Termux-2E8B57?style=for-the-badge&logo=android&logoColor=white)](https://termux.dev/)
+[![Repo Stars](https://img.shields.io/github/stars/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/stargazers)
+[![Issues](https://img.shields.io/github/issues/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/MinatoAka/BotIndodax?style=for-the-badge)](https://github.com/MinatoAka/BotIndodax/commits/main)
 [![Support via Saweria](https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://saweria.co/AKaAturDompet)
 ---
 
@@ -82,7 +87,7 @@ minQty Kuantitas aset minimum sesuai aturan pair.
 cooldownMs Jeda minimum antar transaksi dalam milidetik.
 maxDailyTrades Batas transaksi harian yang dikonfigurasi.
 
-Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax. Jangan unggah atau commit config.json berisi kredensial. Jika kredensial pernah terpublikasi, segera cabut dan buat ulang API key.
+Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax. Jangan unggah atau commit config.json berisi kredensial. Jika kredensial pernah terpublikasi, segera cabut dan buat [...]
 
 Menjalankan pengujian
 
@@ -117,7 +122,7 @@ go run .
 ```
 
 ## ⚠️ PENTING UNTUK ANDROID:
-Jalankan bot dari direktori repository agar config.json dan state.json ditemukan. Sebelum menjalankan bot, sangat disarankan untuk mengetik perintah berikut di Termux agar Android tidak mematikan bot saat layar mati:
+Jalankan bot dari direktori repository agar config.json dan state.json ditemukan. Sebelum menjalankan bot, sangat disarankan untuk mengetik perintah berikut di Termux agar Android tidak mematikan[...]
 
 ```sh
 termux-wake-lock
@@ -125,11 +130,11 @@ termux-wake-lock
 
 Hentikan bot dengan Ctrl + C.
 
-Bot mengirim order market secara nyata jika sinyal dan batas konfigurasi terpenuhi. Jika request order mengalami timeout atau hasil respons tidak dapat dipastikan, periksa order dan saldo di akun Indodax sebelum menjalankan ulang.
+Bot mengirim order market secara nyata jika sinyal dan batas konfigurasi terpenuhi. Jika request order mengalami timeout atau hasil respons tidak dapat dipastikan, periksa order dan saldo di akun[...]
 
 State transaksi
 
-state.json dibuat secara otomatis saat pertama kali transaksi berhasil disimpan. Jika file belum ada, bot memulai dengan status KOSONG. Jika file ada tetapi tidak valid atau tidak dapat dibaca, bot berhenti demi keamanan—jangan hapus atau ubah state tanpa terlebih dahulu membandingkannya dengan saldo dan riwayat akun.
+state.json dibuat secara otomatis saat pertama kali transaksi berhasil disimpan. Jika file belum ada, bot memulai dengan status KOSONG. Jika file ada tetapi tidak valid atau tidak dapat dibaca, b[...]
 
 Status lokal bukan sumber kebenaran saldo atau posisi akun. Periksa akun Indodax secara manual setelah gangguan, order yang hasilnya tidak pasti, atau kegagalan menyimpan state.
 
@@ -155,7 +160,7 @@ Periksa JSON, API key/secret, pair berakhiran idr, nilai trigger/modal/kuantitas
 
 Gagal membaca harga/saldo atau order
 
-Periksa koneksi internet, waktu perangkat, pair, izin API key, saldo, dan pesan kesalahan API. Jika hasil order tidak pasti, jangan langsung menjalankan ulang bot—periksa riwayat/order dan saldo di akun Indodax terlebih dahulu.
+Periksa koneksi internet, waktu perangkat, pair, izin API key, saldo, dan pesan kesalahan API. Jika hasil order tidak pasti, jangan langsung menjalankan ulang bot—periksa riwayat/order dan sald[...]
 
 Bot mati sendiri saat layar HP mati
 
@@ -172,3 +177,4 @@ Jika proyek ini bermanfaat dan membantu Anda, Anda bisa mentraktir saya secangki
 ## Disclaimer
 Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi.
 Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
+```
