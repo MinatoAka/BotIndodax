@@ -7,6 +7,8 @@ Bot trading Indodax berbasis Go untuk dijalankan melalui terminal Android (Termu
 Bot memantau satu pair dan dapat mengirim order `MARKET` bukan `LIMIT` menggunakan
 API key akun Anda secara otomatis.
 
+[![Support via Saweria](https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://saweria.co/AKaAturDompet)
+
 > [!CAUTION]
 > Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian.
 > Tidak ada jaminan keuntungan.
