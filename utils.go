@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 	"time"
@@ -52,32 +51,10 @@ func saveState(filename string, state State) error {
 	if err != nil {
 		return fmt.Errorf("encode state: %w", err)
 	}
-	if err := os.MkdirAll(filepath.Dir(filename), 0700); err != nil {
-		return fmt.Errorf("create state directory: %w", err)
-	}
-	tempFile, err := os.CreateTemp(filepath.Dir(filename), ".state-*.tmp")
+	
+	err = os.WriteFile(filename, data, 0644)
 	if err != nil {
-		return fmt.Errorf("create temporary state file: %w", err)
-	}
-	tempName := tempFile.Name()
-	defer os.Remove(tempName)
-	if err := tempFile.Chmod(0600); err != nil {
-		tempFile.Close()
-		return fmt.Errorf("secure temporary state file: %w", err)
-	}
-	if _, err := tempFile.Write(data); err != nil {
-		tempFile.Close()
-		return fmt.Errorf("write temporary state file: %w", err)
-	}
-	if err := tempFile.Sync(); err != nil {
-		tempFile.Close()
-		return fmt.Errorf("sync temporary state file: %w", err)
-	}
-	if err := tempFile.Close(); err != nil {
-		return fmt.Errorf("close temporary state file: %w", err)
-	}
-	if err := os.Rename(tempName, filename); err != nil {
-		return fmt.Errorf("replace state file: %w", err)
+		return fmt.Errorf("write state: %w", err)
 	}
 	return nil
 }
