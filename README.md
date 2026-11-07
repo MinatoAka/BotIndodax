@@ -7,8 +7,11 @@ Bot trading Indodax berbasis Go untuk dijalankan melalui terminal Android (Termu
 Bot memantau satu pair IDR dan dapat mengirim order market menggunakan API key akun Anda secara otomatis.
 
 > [!CAUTION]
-Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian. Tidak ada jaminan keuntungan.
-Periksa kode, konfigurasi, dan izin API key sebelum menjalankan bot. **Jangan aktifkan izin penarikan (withdrawal) pada API key.** Gunakan dengan risiko Anda sendiri.
+> Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian.
+> Tidak ada jaminan keuntungan.
+> Periksa kode, konfigurasi, dan izin API key sebelum menjalankan bot.
+> **Jangan aktifkan izin penarikan (withdrawal) pada API key.
+> **DWYOR (Do With Your Own Risk)
 
 ## Fitur
 
