@@ -161,13 +161,3 @@ Disclaimer
 Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
 
 ```
-
-***
-**Perubahan Utama dari versi lo:**
-1.  Nambahin `go mod tidy` di Instalasi.
-2.  Ngubah perintah *test* jadi `go test -v ./...` (karena udah pakai modul).
-3.  Ngubah perintah *build* jadi `go build -o bot .` (jauh lebih ringkas).
-4.  Nambahin blok peringatan `termux-wake-lock` (biar *user* baru nggak bingung kenapa botnya mati pas layar dimatiin).
-5.  Ngehapus semua drama *permission state* karena udah kita benerin buat Android.
-
-Silakan di-*push* Jenderal! Repo lo udah sah jadi proyek *open source* kelas *Enterprise*! 🥷🐙🚀
