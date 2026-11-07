@@ -115,8 +115,20 @@ func formatQty(qty float64) string {
 
 func countdown(d time.Duration) {
 	endTime := time.Now().Add(d)
-	
-	log.Printf("⏳ Menunggu %s untuk iterasi berikutnya...", d.String())
+
+	var durationStr string
+	hours := int(d.Hours())
+	minutes := int(d.Minutes()) % 60
+
+	if hours > 0 && minutes == 0 {
+		durationStr = fmt.Sprintf("%d Jam", hours)
+	} else if hours > 0 {
+		durationStr = fmt.Sprintf("%d Jam %d Menit", hours, minutes)
+	} else {
+		durationStr = fmt.Sprintf("%d Menit", minutes)
+	}
+
+	log.Printf("⏳ Menunggu %s untuk iterasi berikutnya...", durationStr)
 
 	for {
 		remaining := time.Until(endTime)
@@ -125,12 +137,12 @@ func countdown(d time.Duration) {
 			break
 		}
 
-		hours := int(remaining.Hours())
-		minutes := int(remaining.Minutes()) % 60
-		seconds := int(remaining.Seconds()) % 60
+		h := int(remaining.Hours())
+		m := int(remaining.Minutes()) % 60
+		s := int(remaining.Seconds()) % 60
 
-		fmt.Printf("\r⏳ Sisa waktu: %02d:%02d:%02d ", hours, minutes, seconds)
-		
+		fmt.Printf("\r⏳ Sisa waktu: %02d:%02d:%02d \033[K", h, m, s)
+
 		time.Sleep(1 * time.Second)
 	}
 }
