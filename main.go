@@ -112,6 +112,8 @@ func main() {
 					log.Printf("Order SELL %d diterima; kuantitas terisi %.8f", result.OrderID, result.ExecutedQty)
 				}
 			}
+		} else {
+			log.Println("🟡 Sabar bos, kita tunggu momen yang pas...")
 		}
 		countdown(1 * time.Hour)
 	}
