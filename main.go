@@ -10,6 +10,9 @@ import (
 const stateFile = "state.json"
 
 func main() {
+	clearTerminal()
+	printBanner()
+	
 	loc, errLoc := time.LoadLocation("Asia/Jakarta")
 	if errLoc == nil {
 		time.Local = loc
