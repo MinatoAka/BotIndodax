@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -125,12 +124,4 @@ func main() {
 		}
 		countdown(30 * time.Minute)
 	}
-}
-
-func parseFormattedQty(qty float64) (float64, error) {
-	parsed, err := strconv.ParseFloat(formatQty(qty), 64)
-	if err != nil || parsed <= 0 {
-		return 0, err
-	}
-	return parsed, nil
 }
