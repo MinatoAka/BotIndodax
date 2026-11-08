@@ -167,7 +167,7 @@ func countdown(d time.Duration) {
 	
 	if d <= 0 {
 		fmt.Printf("\r⏳ Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
-		fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
+		typeWriter("\n✅ Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 		return
 	}
 
@@ -233,7 +233,7 @@ func countdown(d time.Duration) {
 		fmt.Printf("\r⏳ Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
 
 		if remaining == 0 {
-			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
+			typeWriter("\n✅ Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 			return
 		}
 
