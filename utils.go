@@ -163,33 +163,36 @@ func countdown(d time.Duration) {
 
 	for {
 		remaining := time.Until(endTime)
-		if remaining <= 0 {
-			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
-			break
-		}
+		elapsed := time.Since(startTime)
+		
+		percent := (elapsed.Seconds() / d.Seconds()) * 100
+		if percent > 100 { percent = 100 }
 
 		h := int(remaining.Hours())
 		m := int(remaining.Minutes()) % 60
 		s := int(remaining.Seconds()) % 60
 
-		elapsed := time.Since(startTime)
-		percent := (elapsed.Seconds() / d.Seconds()) * 100
-		
+		if remaining <= 0 {
+			h, m, s = 0, 0, 0
+			percent = 100
+		}
+
 		filled := int((percent / 100) * float64(barLength))
 		if filled > barLength { filled = barLength }
 		if filled < 0 { filled = 0 }
 
-		bar := ""
-		for i := 0; i < barLength; i++ {
-			if i < filled {
-				bar += "█"
-			} else {
-				bar += "░"
-			}
-		}
+		filledStr := strings.Repeat("\033[32m█\033[0m", filled)
+		emptyStr := strings.Repeat("\033[90m░\033[0m", barLength-filled)
+		bar := filledStr + emptyStr
+
 		fmt.Printf("\r⏳ Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
+
+		if remaining <= 0 {
+			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
+			break
+		}
+
 		time.Sleep(1 * time.Second)
-		
 	}
 }
 
