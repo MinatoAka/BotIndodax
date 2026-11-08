@@ -145,6 +145,9 @@ func formatRupiah(n float64) string {
 }
 
 func typeWriter(text string, speed time.Duration) {
+	timestamp := time.Now().Format("2006/01/02 15:04:05")
+	fmt.Printf("%s ", timestamp)
+	
 	chars := []rune(text)
 	for i, char := range chars {
 		fmt.Printf("%c", char)
