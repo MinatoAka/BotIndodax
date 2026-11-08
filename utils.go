@@ -143,7 +143,8 @@ func formatRupiah(n float64) string {
 }
 
 func countdown(d time.Duration) {
-	endTime := time.Now().Add(d)
+	startTime := time.Now()
+	endTime := startTime.Add(d)
 
 	var durationStr string
 	hours := int(d.Hours())
@@ -157,6 +158,8 @@ func countdown(d time.Duration) {
 		durationStr = fmt.Sprintf("%d Menit", minutes)
 	}
 
+	barLength := 20
+
 	for {
 		remaining := time.Until(endTime)
 		if remaining <= 0 {
@@ -168,9 +171,24 @@ func countdown(d time.Duration) {
 		m := int(remaining.Minutes()) % 60
 		s := int(remaining.Seconds()) % 60
 
-		fmt.Printf("\r⏳ Menunggu %s | Sisa waktu: %02d:%02d:%02d \033[K", durationStr, h, m, s)
+		elapsed := time.Since(startTime)
+		percent := (elapsed.Seconds() / d.Seconds()) * 100
+		
+		filled := int((percent / 100) * float64(barLength))
+		if filled > barLength { filled = barLength }
+		if filled < 0 { filled = 0 }
 
+		bar := ""
+		for i := 0; i < barLength; i++ {
+			if i < filled {
+				bar += "█"
+			} else {
+				bar += "░"
+			}
+		}
+		fmt.Printf("\r⏳ Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
 		time.Sleep(1 * time.Second)
+		
 	}
 }
 
