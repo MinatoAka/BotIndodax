@@ -192,8 +192,9 @@ func countdown(d time.Duration) {
 	defer fmt.Print("\033[?25h")
 	
 	if d <= 0 {
-		fmt.Printf("\r[•] Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
-		typeWriter("\n[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+		fmt.Printf("\r[÷] Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
+		typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+		fmt.Println()
 		return
 	}
 
@@ -256,10 +257,11 @@ func countdown(d time.Duration) {
 		emptyStr := strings.Repeat("\033[90m░\033[0m", barLength-filled)
 		bar := filledStr + emptyStr
 
-		fmt.Printf("\r[•] Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
+		fmt.Printf("\r[÷] Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
 
 		if remaining == 0 {
-			typeWriter("\n[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+			typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+			fmt.Println()
 			return
 		}
 
@@ -288,7 +290,7 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 		if sisa < 0 {
 			sisa = 0
 		}
-		log.Printf("[•] Limit harian: %d/%d terpakai | Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
+		log.Printf("[•] Limit harian: %d/%d terpakai | Sisa kuota: %d trade", state.DailyTrades, maxTrades, sisa)
 	}
 }
 
