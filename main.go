@@ -11,6 +11,7 @@ const stateFile = "state.json"
 
 func main() {
 	clearTerminal()
+	setupGracefulShutdown()
 	printBanner()
 	
 	loc, errLoc := time.LoadLocation("Asia/Jakarta")
