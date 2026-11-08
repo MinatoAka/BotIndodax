@@ -88,18 +88,20 @@ Contoh format:
 }
 ```
 
-Field Keterangan
-apiKey API key Indodax TAPI v2 dengan izin baca dan spot trading.
-secretKey Secret key pasangan API key; rahasiakan.
-pair Pair IDR, huruf kecil, misalnya ethidr.
-buyTrigger Batas harga maksimum untuk sinyal beli.
-sellTrigger Batas harga minimum untuk sinyal jual; harus lebih besar dari buyTrigger.
-modalPerTrade Nominal IDR yang direncanakan untuk pembelian.
-minQty Kuantitas aset minimum sesuai aturan pair.
-cooldownMs Jeda minimum antar transaksi dalam milidetik.
-maxDailyTrades Batas transaksi harian yang dikonfigurasi.
+**Field Keterangan**
+- apiKey API key Indodax TAPI v2 dengan izin baca dan spot trading.
+- secretKey Secret key pasangan API key; rahasiakan!
+- pair Pair IDR, huruf kecil, misalnya ethidr.
+- buyTrigger Batas harga maksimum untuk sinyal beli.
+- sellTrigger Batas harga minimum untuk sinyal jual; harus lebih besar dari buyTrigger.
+- modalPerTrade Nominal IDR yang direncanakan untuk pembelian.
+- minQty Kuantitas aset minimum sesuai aturan pair.
+- cooldownMs Jeda minimum antar transaksi dalam milidetik.
+- maxDailyTrades Batas transaksi harian yang dikonfigurasi.
 
-Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax. Jangan unggah atau commit config.json berisi kredensial. Jika kredensial pernah terpublikasi, segera cabut dan buat `APi_KEY`.
+Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax.
+Jangan unggah atau commit config.json berisi kredensial.
+Jika kredensial pernah terpublikasi, segera cabut dan buat `APi_KEY`.
 
 ## Menjalankan pengujian
 
