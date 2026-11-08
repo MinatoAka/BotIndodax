@@ -31,7 +31,7 @@ func main() {
 		}
 
 		resetDailyCounterIfNeeded(&state, stateFile, config.MaxDailyTrades)
-		log.Printf("Config: Buy = Rp %s | Sell = Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		log.Printf("📊 Config: Buy = Rp %s | Sell = Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
 
 		price, err := getTickerPrice(config.Pair)
 		if err != nil {
@@ -39,7 +39,7 @@ func main() {
 			time.Sleep(5 * time.Minute)
 			continue
 		}
-		log.Printf("Pair = %s | Harga = Rp %s | Status = %s", strings.ToUpper(config.Pair), formatRupiah(price), state.Status)
+		log.Printf("📊 Pair = %s | Harga = Rp %s | Status = %s", strings.ToUpper(config.Pair), formatRupiah(price), state.Status)
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
@@ -115,7 +115,7 @@ func main() {
 				}
 			}
 		} else {
-			log.Println("☕ Sabar bos, kita ngopi dulu...")
+			log.Println("⏳ Sabar bos, kita ngopi dulu...")
 		}
 		countdown(1 * time.Hour)
 	}
