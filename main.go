@@ -12,7 +12,7 @@ func main() {
 	clearTerminal()
 	setupGracefulShutdown()
 	printBanner()
-	
+
 	loc, errLoc := time.LoadLocation("Asia/Jakarta")
 	if errLoc == nil {
 		time.Local = loc
@@ -48,6 +48,7 @@ func main() {
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
+		todayUTC := now.Add(-7 * time.Hour).Format("2006-01-02")
 
 		buySignal := state.Status == "KOSONG" && price <= config.BuyTrigger
 		sellSignal := state.Status == "PEGANG" && price >= config.SellTrigger
@@ -65,6 +66,8 @@ func main() {
 					log.Println("[×] Cooldown aktif | Order skipped!")
 				case limitReached:
 					log.Println("[×] Batas harian tercapai | Order skipped!")
+				
+				// EKSEKUSI BUY
 				case buySignal && idrBalance < config.ModalPerTrade:
 					log.Println("[×] Saldo IDR tidak cukup | Order skipped!")
 				case buySignal:
@@ -76,52 +79,69 @@ func main() {
 						log.Println("[×] Kuantitas di bawah minimum!")
 					} else {
 						result, orderErr := kirimOrder(config, "BUY", price, qty)
+						
 						if orderErr != nil {
 							log.Printf("[×] Order BUY gagal | Bot stopped! %v", orderErr)
 							return
 						}
-						state.LastTradeAt = nowMillis
-						state.DailyTrades++
-						if result.ExecutedQty > 0 {
+						
+						if result.OrderID > 0 {
+							log.Printf("[✓] Order BUY sukses! ID: %d", result.OrderID)
+							
 							state.Status = "PEGANG"
+							state.LastTradeAt = nowMillis
+							state.DailyTrades++
+							state.LastTradeDay = todayUTC
+							
+							if err := saveState(stateFile, state); err != nil {
+								log.Printf("[×] State gagal disimpan: %v", err)
+								return
+							}
+							
+							_, assetAfter, _ := getBalances(config)
+							log.Printf("[i] Cek saldo aset: %.8f", assetAfter)
+							
+						} else {
+							log.Println("[×] Order BUY gagal!")
 						}
-						if err := saveState(stateFile, state); err != nil {
-							log.Printf("[×] Order BUY diterima tapi state tidak tersimpan | Bot stopped! %v", err)
-							return
-						}
-						if result.ExecutedQty <= 0 {
-							log.Printf("[×] Order %d diterima tanpa kuantitas | Bot stopped!", result.OrderID)
-							return
-						}
-						log.Printf("[✓] Order BUY %d diterima | Kuantitas: %.8f", result.OrderID, result.ExecutedQty)
 					}
+
+				// EKSEKUSI SELL
 				case sellSignal && assetBalance <= 0:
-					log.Println("[×] Saldo tidak cukup | Order SELL skipped!")
+					log.Println("[×] Saldo aset tidak cukup | Order SELL skipped!")
 				case sellSignal:
 					result, orderErr := kirimOrder(config, "SELL", price, assetBalance)
+					
 					if orderErr != nil {
 						log.Printf("[×] Order SELL gagal | Bot stopped! %v", orderErr)
 						return
 					}
-					state.LastTradeAt = nowMillis
-					state.DailyTrades++
-					if result.ExecutedQty >= assetBalance {
+					
+					if result.OrderID > 0 {
+						log.Printf("[✓] Order SELL sukses! ID: %d", result.OrderID)
+						
 						state.Status = "KOSONG"
+						state.LastTradeAt = nowMillis
+						state.DailyTrades++
+						state.LastTradeDay = todayUTC
+						
+						if err := saveState(stateFile, state); err != nil {
+							log.Printf("[×] State gagal disimpan: %v", err)
+							return
+						}
+						
+						idrAfter, _, _ := getBalances(config)
+						log.Printf("[i] Cek Saldo: IDR saat ini = Rp %s", formatRupiah(idrAfter))
+						
+					} else {
+						log.Println("[×] Order SELL gagal!")
 					}
-					if err := saveState(stateFile, state); err != nil {
-						log.Printf("[×] Order SELL diterima tapi state tidak tersimpan | Bot stopped! %v", err)
-						return
-					}
-					if result.ExecutedQty <= 0 {
-						log.Printf("[×] Order SELL %d diterima kuantitas: 0 | Bot stopped", result.OrderID)
-						return
-					}
-					log.Printf("[✓] Order SELL %d diterima | Kuantitas: %.8f", result.OrderID, result.ExecutedQty)
 				}
 			}
 		} else {
 			typeWriter("[÷] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
+		
 		countdown(30 * time.Minute)
 	}
 }
