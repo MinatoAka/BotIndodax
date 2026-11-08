@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"path/filepath"
+	"os/signal"
 	"fmt"
 	"log"
 	"net/url"
@@ -16,6 +17,7 @@ import (
 	"strings"
 	"strconv"
 	"unicode"
+	"syscall"
 	"time"
 )
 
@@ -24,6 +26,19 @@ type State struct {
 	LastTradeAt  int64  `json:"lastTradeAt"`
 	DailyTrades  int    `json:"dailyTrades"`
 	LastTradeDay string `json:"lastTradeDay"`
+}
+
+func setupGracefulShutdown() {
+	c := make(chan os.Signal, 1)
+	
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	
+	go func() {
+		<-c 
+		
+		fmt.Print("\033[?25h") 
+		os.Exit(0)
+	}()
 }
 
 func loadState(filename string) (State, error) {
