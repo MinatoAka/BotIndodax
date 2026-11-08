@@ -31,7 +31,7 @@ func main() {
 		}
 
 		resetDailyCounterIfNeeded(&state, stateFile, config.MaxDailyTrades)
-		log.Printf("Buy Trigger  = Rp %s | Sell Trigger = Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		log.Printf("Config: Buy = Rp %s | Sell = Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
 
 		price, err := getTickerPrice(config.Pair)
 		if err != nil {
