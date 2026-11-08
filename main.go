@@ -17,7 +17,7 @@ func main() {
 	if errLoc == nil {
 		time.Local = loc
 	}
-	log.Println("BotIndodax starting")
+	typeWriter("🤖 BotIndodax starting...", 40*time.Millisecond)
 
 	for {
 		config, err := loadConfig("config.json")
@@ -120,7 +120,7 @@ func main() {
 				}
 			}
 		} else {
-			log.Println("⏳ Sabar bos, kita ngopi dulu...")
+			typeWriter("⏳ Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
 		countdown(30 * time.Minute)
 	}
