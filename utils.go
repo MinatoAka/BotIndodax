@@ -162,7 +162,7 @@ func resetDailyCounterIfNeeded(state *State, stateFile string) {
 	if state.LastTradeDay != today {
 		state.DailyTrades = 0
 		state.LastTradeDay = today
-		log.Printf("🔄 Hari trading baru (UTC) terdeteksi (%s). Limit harian di-reset ke 0.", today)
+		log.Printf("🔄 Hari trading baru (UTC) terdeteksi (%s). Counter trade di-reset ke 0.", today)
 		
 		if err := saveState(stateFile, *state); err != nil {
 			log.Printf("❌ Gagal menyimpan reset limit harian: %v", err)
