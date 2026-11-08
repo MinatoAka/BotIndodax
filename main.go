@@ -38,7 +38,7 @@ func main() {
 			time.Sleep(5 * time.Minute)
 			continue
 		}
-		log.Printf("Pair=%s | Harga=Rp %.0f | Status=%s", strings.ToUpper(config.Pair), price, state.Status)
+		log.Printf("Pair = %s | Harga = Rp %.0f | Status = %s", strings.ToUpper(config.Pair), price, state.Status)
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
