@@ -11,7 +11,9 @@ import (
 	"net/url"
 	"os"
 	"sort"
+	"math"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -119,6 +121,25 @@ func formatQty(qty float64) string {
 	formatted := fmt.Sprintf("%.8f", qty)
 	formatted = strings.TrimRight(formatted, "0")
 	return strings.TrimRight(formatted, ".")
+}
+
+func formatRupiah(n float64) string {
+	val := int64(math.Round(n))
+	sign := ""
+	if val < 0 {
+		sign = "-"
+		val = -val
+	}
+	s := strconv.FormatInt(val, 10)
+	var b strings.Builder
+	b.WriteString(sign)
+	for i, c := range s {
+		if i > 0 && (len(s)-i)%3 == 0 {
+			b.WriteByte('.')
+		}
+		b.WriteRune(c)
+	}
+	return b.String()
 }
 
 func countdown(d time.Duration) {
