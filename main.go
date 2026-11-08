@@ -10,10 +10,13 @@ import (
 const stateFile = "state.json"
 
 func main() {
+	loc, errLoc := time.LoadLocation("Asia/Jakarta")
+	if errLoc == nil {
+		time.Local = loc
+	}
 	log.Println("BotIndodax starting")
 
 	for {
-		// 🟢 FIX: loadConfig ditarik ke dalam loop
 		config, err := loadConfig("config.json")
 		if err != nil {
 			log.Printf("Konfigurasi tidak valid (tunggu 1 menit): %v", err)
