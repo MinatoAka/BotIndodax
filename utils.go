@@ -141,7 +141,7 @@ func countdown(d time.Duration) {
 	for {
 		remaining := time.Until(endTime)
 		if remaining <= 0 {
-			fmt.Println("\n✅ Waktu tunggu selesai. Lanjut cek pasar...")
+			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek pasar...")
 			break
 		}
 
@@ -162,7 +162,7 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 	if state.LastTradeDay != today {
 		state.DailyTrades = 0
 		state.LastTradeDay = today
-		log.Printf("🔄 Hari trading baru (UTC) terdeteksi (%s). Limit harian di-reset ke 0.", today)
+		log.Printf("🔄 Hari trading baru (UTC) terdeteksi (%s) | Limit harian di-reset ke 0.", today)
 		
 		if err := saveState(stateFile, *state); err != nil {
 			log.Printf("❌ Gagal menyimpan reset limit harian: %v", err)
@@ -172,6 +172,6 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 		if sisa < 0 {
 			sisa = 0
 		}
-		log.Printf("📊 Limit harian: %d/%d terpakai. Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
+		log.Printf("📊 Limit harian: %d/%d terpakai | Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
 	}
 }
