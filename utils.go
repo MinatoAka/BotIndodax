@@ -144,6 +144,9 @@ func formatRupiah(n float64) string {
 }
 
 func countdown(d time.Duration) {
+	fmt.Print("\033[?25l")
+	defer fmt.Print("\033[?25h")
+	
 	if d <= 0 {
 		fmt.Printf("\r⏳ Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
 		fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
