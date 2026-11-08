@@ -17,34 +17,34 @@ func main() {
 	if errLoc == nil {
 		time.Local = loc
 	}
-	typeWriter("[🤖] BotIndodax starting...", 40*time.Millisecond)
+	typeWriter("[✓] BotIndodax starting...", 40*time.Millisecond)
 
 	for {
 		config, err := loadConfig("config.json")
 		if err != nil {
-			log.Printf("[×]Konfigurasi tidak valid (tunggu 1 menit): %v", err)
+			log.Printf("[×] Konfigurasi tidak valid (tunggu 1 menit): %v", err)
 			time.Sleep(1 * time.Minute)
 			continue
 		}
 
 		state, err := loadState(stateFile)
 		if err != nil {
-			log.Printf("[×]State tidak dapat dibaca | Bot stopped! %v", err)
+			log.Printf("[×] State tidak dapat dibaca | Bot stopped! %v", err)
 			return
 		}
 
 		resetDailyCounterIfNeeded(&state, stateFile, config.MaxDailyTrades)
-		log.Printf("[•] Config => Buy: Rp %s | Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		log.Printf("[$] Config => Buy: Rp %s | Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
 
 		price, err := getTickerPrice(config.Pair)
 		if err != nil {
-			log.Printf("[×]Gagal mengambil harga: %v", err)
+			log.Printf("[×] Gagal mengambil harga: %v", err)
 			time.Sleep(5 * time.Minute)
 			continue
 		}
-		log.Printf("[•] Pair = %s", strings.ToUpper(config.Pair))
-		log.Printf("[•] Harga = Rp %s", formatRupiah(price))
-		log.Printf("[•] Status = %s", state.Status)
+		log.Printf("[•] Pair: %s", strings.ToUpper(config.Pair))
+		log.Printf("[$] Harga: Rp %s", formatRupiah(price))
+		log.Printf("[•] Status: %s", state.Status)
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
@@ -120,7 +120,7 @@ func main() {
 				}
 			}
 		} else {
-			typeWriter("[•] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
+			typeWriter("[÷] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
 		countdown(30 * time.Minute)
 	}
