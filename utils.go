@@ -145,9 +145,13 @@ func formatRupiah(n float64) string {
 }
 
 func typeWriter(text string, speed time.Duration) {
-	for _, char := range text {
+	chars := []rune(text)
+	for i, char := range chars {
 		fmt.Printf("%c", char)
 		
+		if i == len(chars)-1 {
+			continue
+		}
 		if unicode.IsSpace(char) {
 			time.Sleep(speed / 2)
 		} else {
@@ -287,3 +291,4 @@ func printBanner() {
     fmt.Printf("%s", reset)
 	fmt.Printf("%s%s  BotIndodax — Trading Engine%s\n\n", white, bold, reset)
 }
+
