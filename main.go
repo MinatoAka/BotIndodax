@@ -39,7 +39,7 @@ func main() {
 			time.Sleep(5 * time.Minute)
 			continue
 		}
-		log.Printf("📊 Pair = %s | Harga = Rp %s | Status = %s", strings.ToUpper(config.Pair), formatRupiah(price))
+		log.Printf("📊 Pair = %s | Harga = Rp %s", strings.ToUpper(config.Pair), formatRupiah(price))
 		log.Printf("📊 Status = %s", state.Status)
 
 		now := time.Now()
