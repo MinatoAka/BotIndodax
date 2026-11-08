@@ -119,7 +119,7 @@ func main() {
 		} else {
 			log.Println("⏳ Sabar bos, kita ngopi dulu...")
 		}
-		countdown(1 * time.Hour)
+		countdown(30 * time.Minute)
 	}
 }
 
