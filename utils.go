@@ -153,7 +153,6 @@ func countdown(d time.Duration) {
 	startTime := time.Now()
 	endTime := startTime.Add(d)
 
-	// Round up so short positive durations are not displayed as 0 Menit/Detik.
 	totalSeconds := int(math.Ceil(d.Seconds()))
 	hours := totalSeconds / 3600
 	minutes := (totalSeconds % 3600) / 60
