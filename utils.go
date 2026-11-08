@@ -140,6 +140,14 @@ func formatQty(qty float64) string {
 	return strings.TrimRight(formatted, ".")
 }
 
+func parseFormattedQty(qty float64) (float64, error) {
+	parsed, err := strconv.ParseFloat(formatQty(qty), 64)
+	if err != nil || parsed <= 0 {
+		return 0, err
+	}
+	return parsed, nil
+}
+
 func formatRupiah(n float64) string {
 	val := int64(math.Round(n))
 	sign := ""
@@ -184,8 +192,8 @@ func countdown(d time.Duration) {
 	defer fmt.Print("\033[?25h")
 	
 	if d <= 0 {
-		fmt.Printf("\r⏳ Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
-		typeWriter("\n✅ Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+		fmt.Printf("\r[•] Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
+		typeWriter("\n[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 		return
 	}
 
@@ -248,10 +256,10 @@ func countdown(d time.Duration) {
 		emptyStr := strings.Repeat("\033[90m░\033[0m", barLength-filled)
 		bar := filledStr + emptyStr
 
-		fmt.Printf("\r⏳ Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
+		fmt.Printf("\r[•] Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
 
 		if remaining == 0 {
-			typeWriter("\n✅ Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
+			typeWriter("\n[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 			return
 		}
 
@@ -270,17 +278,17 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 	if state.LastTradeDay != today {
 		state.DailyTrades = 0
 		state.LastTradeDay = today
-		log.Printf("🔄 Hari trading baru (UTC) terdeteksi (%s) | Limit harian di-reset ke 0.", today)
+		log.Printf("[✓] New day trade (UTC: %s) | Limit harian reset: 0", today)
 		
 		if err := saveState(stateFile, *state); err != nil {
-			log.Printf("❌ Gagal menyimpan reset limit harian: %v", err)
+			log.Printf("[×] Gagal menyimpan reset limit harian: %v", err)
 		}
 	} else {
 		sisa := maxTrades - state.DailyTrades
 		if sisa < 0 {
 			sisa = 0
 		}
-		log.Printf("📊 Limit harian: %d/%d terpakai | Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
+		log.Printf("[•] Limit harian: %d/%d terpakai | Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
 	}
 }
 
@@ -309,4 +317,3 @@ func printBanner() {
     fmt.Printf("%s", reset)
 	fmt.Printf("%s%s  BotIndodax — Trading Engine%s\n\n", white, bold, reset)
 }
-
