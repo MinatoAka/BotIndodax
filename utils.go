@@ -157,12 +157,10 @@ func countdown(d time.Duration) {
 		durationStr = fmt.Sprintf("%d Menit", minutes)
 	}
 
-	log.Printf("⏳ Menunggu %s untuk iterasi berikutnya...", durationStr)
-
 	for {
 		remaining := time.Until(endTime)
 		if remaining <= 0 {
-			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek pasar...")
+			fmt.Println("\n✅ Waktu tunggu selesai | Lanjut cek market...")
 			break
 		}
 
@@ -170,7 +168,7 @@ func countdown(d time.Duration) {
 		m := int(remaining.Minutes()) % 60
 		s := int(remaining.Seconds()) % 60
 
-		fmt.Printf("\r⏳ Sisa waktu: %02d:%02d:%02d \033[K", h, m, s)
+		fmt.Printf("\r⏳ Menunggu %s | Sisa waktu: %02d:%02d:%02d \033[K", durationStr, h, m, s)
 
 		time.Sleep(1 * time.Second)
 	}
