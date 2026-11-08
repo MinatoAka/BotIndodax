@@ -15,6 +15,7 @@ import (
 	"math"
 	"strings"
 	"strconv"
+	"unicode"
 	"time"
 )
 
@@ -141,6 +142,19 @@ func formatRupiah(n float64) string {
 		b.WriteRune(c)
 	}
 	return b.String()
+}
+
+func typeWriter(text string, speed time.Duration) {
+	for _, char := range text {
+		fmt.Printf("%c", char)
+		
+		if unicode.IsSpace(char) {
+			time.Sleep(speed / 2)
+		} else {
+			time.Sleep(speed)
+		}
+	}
+	fmt.Println()
 }
 
 func countdown(d time.Duration) {
