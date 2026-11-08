@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"os/exec"
 	"os"
 	"sort"
 	"math"
@@ -211,4 +212,30 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 		}
 		log.Printf("📊 Limit harian: %d/%d terpakai | Sisa kuota: %d trade.", state.DailyTrades, maxTrades, sisa)
 	}
+}
+
+func clearTerminal() {
+	cmd := exec.Command("clear")
+	cmd.Stdout = os.Stdout
+	_ = cmd.Run()
+}
+
+func printBanner() {
+	cyan := "\033[36m"
+	white := "\033[37m"
+	bold := "\033[1m"
+	reset := "\033[0m"
+
+	fmt.Printf("%s", cyan)
+	fmt.Println(`
+     $$$$$$\  $$\   $$\  PROJECT™
+    $$  __$$\ $$ | $$  | 
+    $$ /  $$ |$$ |$$  / $$$$$$\  
+    $$$$$$$$ |$$$$$  /  \____$$\ 
+    $$  __$$ |$$  $$<   $$$$$$$ |
+    $$ |  $$ |$$ |\$$\ $$  __$$ |
+    $$ |  $$ |$$ | \$$\\$$$$$$$ |
+    \__|  \__|\__|  \__|\_______|`)
+    fmt.Printf("%s", reset)
+	fmt.Printf("%s%s  BotIndodax — Trading Engine%s\n\n", white, bold, reset)
 }
