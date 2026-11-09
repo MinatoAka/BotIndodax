@@ -10,7 +10,9 @@ func TestConfigValidateRejectsInvalidTradingValues(t *testing.T) {
 	config := Config{
 		ApiKey: "key", SecretKey: "secret", Pair: "ethidr",
 		BuyTrigger: 100, SellTrigger: 110, ModalPerTrade: 1000,
-		MinQty: 0.001, CooldownMs: 1000,
+		MinQty: 0.001, 
+		CooldownMinutes: 10,
+		PollingInterval: 15,
 	}
 	if err := config.validate(); err != nil {
 		t.Fatalf("valid config rejected: %v", err)
