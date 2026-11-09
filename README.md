@@ -1,56 +1,49 @@
 <p align="center">
   <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.27.3%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go 1.27.3+"></a>
   <a href="https://termux.dev/"><img src="https://img.shields.io/badge/Platform-Termux-2E8B57?style=for-the-badge&logo=android&logoColor=white" alt="Platform: Termux"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License"></a>
-  <a href="https://saweria.co/AKaAturDompet"><img src="https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Support via Saweria"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="Lisensi MIT"></a>
+  <a href="https://saweria.co/AKaAturDompet"><img src="https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Dukung via Saweria"></a>
 </p>
 
 # BotIndodax
 
-Bot trading otomatis Indodax berbasis Go yang dirancang untuk dijalankan di Termux. Bot memantau satu pair IDR, membaca harga pasar, dan mengirim order market berdasarkan trigger harga yang dikonfigurasi.
+Bot trading otomatis Indodax berbasis Go untuk Android melalui Termux. Bot memantau satu pair IDR dan mengirim order **market** sesuai trigger harga serta status posisi lokal.
 
 > [!CAUTION]
-> Bot dapat mengirim transaksi nyata dengan saldo akun Anda. Trading memiliki risiko kerugian dan tidak ada jaminan keuntungan. Tinjau kode dan konfigurasi sebelum digunakan. Gunakan API key dengan izin baca dan spot trading saja—jangan aktifkan izin penarikan. Gunakan dengan risiko Anda sendiri.
-
-## Ringkasan
-
-BotIndodax adalah bot trading berbasis terminal yang berjalan di Android dengan Termux. Bot membaca harga ticker, mengambil saldo akun dari API Indodax, lalu menentukan aksi beli/jual berdasarkan state lokal (`KOSONG` atau `PEGANG`).
-
-Bot ini sengaja dibuat sederhana dan fokus pada satu pair. Data state disimpan di `state.json` agar bot dapat melanjutkan siklus trading secara konsisten.
+> Bot dapat mengirim order nyata dan menggunakan saldo akun Anda. Trading memiliki risiko kerugian dan tidak menjamin keuntungan. Tinjau kode dan konfigurasi sebelum menjalankan. Gunakan API key dengan izin baca dan spot trading saja—**jangan aktifkan izin penarikan**. Anda bertanggung jawab atas transaksi yang dilakukan.
 
 ## Fitur
 
-- Memantau harga ticker dari API Indodax.
-- Membaca saldo IDR dan saldo aset dari akun Indodax.
-- Mengecek state lokal: `KOSONG` atau `PEGANG`.
-- Mengirim order BUY saat status `KOSONG` dan harga `<= buyTrigger`.
-- Mengirim order SELL saat status `PEGANG` dan harga `>= sellTrigger`.
-- Menghitung jumlah pembelian menggunakan `modalPerTrade`.
-- Memeriksa `minQty` sebelum order BUY.
-- Menyimpan `lastTradeAt` dan `status` di `state.json`.
-- Menerapkan `cooldownMs` agar transaksi tidak berulang terlalu cepat.
-- Membaca ulang `config.json` pada setiap iterasi.
-- Menjaga keamanan dengan menghentikan bot bila hasil order tidak dapat dipastikan.
+- Membaca harga ticker dari endpoint publik Indodax dan saldo akun melalui API v2.
+- Mengirim order market BUY saat status lokal `KOSONG` dan harga ticker sama dengan atau di bawah `buyTrigger`.
+- Mengirim order market SELL saat status lokal `PEGANG` dan harga ticker sama dengan atau di atas `sellTrigger`.
+- Menghitung nominal BUY dari `modalPerTrade`, memeriksa saldo IDR, dan membandingkan kuantitas dengan `minQty`.
+- Menjual seluruh saldo aset tersedia untuk pair yang dipantau saat sinyal SELL terpenuhi.
+- Menyimpan status posisi dan waktu transaksi terakhir dalam `state.json`.
+- Menerapkan jeda transaksi berdasarkan `cooldownMs` dan membaca ulang `config.json` setiap iterasi.
+- Menghentikan proses jika hasil pengiriman order tidak dapat dipastikan, agar order dapat diperiksa di akun sebelum bot dijalankan kembali.
 
-## Batasan
+## Cara kerja dan batasan
 
-- Bot hanya memantau satu pair.
-- State lokal adalah keputusan lokal, bukan pengganti pemeriksaan saldo dan order di akun Indodax.
-- Saat ticker gagal diambil, bot menunggu beberapa menit sebelum mencoba lagi.
+- Bot hanya mengelola **satu pair IDR**.
+- Status posisi yang digunakan adalah `KOSONG` dan `PEGANG`; status ini disimpan secara lokal dan bukan cerminan otomatis seluruh aktivitas akun.
+- Pemeriksaan market dilakukan setiap 15 menit. Jika permintaan ticker gagal, bot menunggu 5 menit sebelum mencoba kembali. Jika konfigurasi tidak valid, bot mencoba lagi setelah 1 menit.
+- Tidak ada pengaturan batas jumlah transaksi harian.
+- Jika saldo akun tidak cocok dengan state lokal, periksa dan selaraskan kondisi akun sebelum melanjutkan.
+- Jika permintaan order timeout atau konfirmasi tidak lengkap, periksa riwayat order dan saldo Indodax sebelum menjalankan ulang bot. Order mungkin sudah diterima.
 
 ## Persyaratan
 
 - Android dengan Termux dan koneksi internet.
-- Go versi 1.27.3 atau lebih baru.
-- Akun Indodax dengan API key TAPI v2.
-- API key harus memiliki izin baca dan spot trading. Jangan aktifkan izin `WITHDRAWAL`.
+- Go versi **1.27.3 atau lebih baru** (sesuai `go.mod`).
+- Akun Indodax dengan API key TAPI v2 berizin baca dan spot trading. Jangan aktifkan izin `WITHDRAWAL`.
 
 ## Instalasi
 
 ```sh
 pkg update
 pkg upgrade
-pkg install git golang nano
+pkg install git golang
 
 git clone https://github.com/MinatoAka/BotIndodax.git
 cd BotIndodax
@@ -58,13 +51,13 @@ cd BotIndodax
 
 ## Konfigurasi
 
-Edit file `config.json` di root repository, lalu isi API key dan secret Anda.
+Edit `config.json` di direktori repository. Ganti nilai placeholder dengan API key dan secret Anda:
 
 ```sh
 nano config.json
 ```
 
-Contoh konfigurasi:
+Contoh format:
 
 ```json
 {
@@ -82,60 +75,50 @@ Contoh konfigurasi:
 | Field | Keterangan |
 | --- | --- |
 | `apiKey` | API key Indodax TAPI v2. Wajib diisi. |
-| `secretKey` | Secret key pasangan API key. Wajib diisi dan harus dirahasiakan. |
-| `pair` | Pair IDR dalam huruf kecil, contohnya `ethidr`. |
-| `buyTrigger` | Harga maksimum yang memicu BUY. |
-| `sellTrigger` | Harga minimum yang memicu SELL; harus lebih besar dari `buyTrigger`. |
-| `modalPerTrade` | Nominal IDR yang dipakai untuk menghitung kuantitas BUY. |
-| `minQty` | Kuantitas minimum aset yang diperbolehkan untuk order BUY. |
-| `cooldownMs` | Jeda minimum antar transaksi, dalam milidetik. |
+| `secretKey` | Secret key pasangan API key. Wajib diisi dan dirahasiakan. |
+| `pair` | Pair IDR huruf kecil, misalnya `ethidr`. |
+| `buyTrigger` | Harga pemicu BUY; harus berupa angka positif. |
+| `sellTrigger` | Harga pemicu SELL; harus lebih besar dari `buyTrigger`. |
+| `modalPerTrade` | Nominal IDR yang digunakan untuk menghitung order BUY. |
+| `minQty` | Kuantitas aset minimum untuk order BUY. Sesuaikan dengan aturan pair. |
+| `cooldownMs` | Jeda minimum setelah transaksi sukses, dalam milidetik. Nilai `0` menonaktifkan jeda. |
 
-Catatan penting:
-- Jangan commit atau bagikan kredensial asli ke repository publik.
-- Jika API key pernah bocor, cabut dan buat yang baru.
-- Konfigurasi akan divalidasi saat bot dijalankan.
+Jangan commit atau membagikan kredensial asli. Jika API key atau secret terungkap, cabut key tersebut dan buat yang baru. Pair, trigger, modal, dan kuantitas juga divalidasi saat konfigurasi dibaca.
 
 ## Build dan jalankan
 
-Jalankan dari directory repository agar `config.json` dan `state.json` dapat ditemukan.
+Jalankan bot dari direktori repository agar `config.json` dan `state.json` ditemukan.
 
 ```sh
 go build -o bot .
 ./bot
 ```
 
-Atau jalankan langsung tanpa build binary:
+Atau jalankan langsung:
 
 ```sh
 go run .
 ```
 
-Di Termux, Anda juga dapat menggunakan perintah berikut agar perangkat tidak masuk sleep saat bot berjalan:
+Di Termux, perintah berikut dapat membantu mencegah perangkat tidur saat bot berjalan:
 
 ```sh
 termux-wake-lock
 ```
 
-Hentikan bot dengan:
-
-```sh
-Ctrl + C
-```
+Hentikan bot dengan `Ctrl+C`.
 
 ## State dan pengujian
 
-Bot menyimpan status posisi dan waktu transaksi terakhir di `state.json`.
+`state.json` dibuat saat runtime. Jika file belum ada, bot memulai dengan status `KOSONG`. File ini menyimpan status posisi dan waktu transaksi terakhir; jangan menghapus atau mengubahnya tanpa memeriksa posisi serta saldo akun.
 
-- Jika file tidak ada, bot akan mulai dengan status `KOSONG`.
-- Jangan mengubah state secara sembarangan tanpa memastikan kondisi akun Anda masih sesuai.
-
-Jalankan pengujian lokal:
+Jalankan pengujian lokal dengan:
 
 ```sh
 go test ./...
 ```
 
-Catatan: pada saat ini, tes di repo masih perlu diselaraskan dengan konfigurasi yang benar-benar dipakai aplikasi. Namun fungsi utama bot tetap sesuai dengan implementasi yang ada.
+Pengujian yang tersedia mencakup validasi konfigurasi, pembacaan dan penyimpanan state, izin file state, serta konsistensi query string. Test tersebut tidak mengirim order ke Indodax.
 
 ## Struktur repository
 
@@ -150,18 +133,19 @@ BotIndodax/
 ├── market.go
 ├── order.go
 ├── utils.go
-├── utils_test.go
-└── state.json   # dibuat saat runtime
+└── utils_test.go
 ```
 
 ## Dukungan
 
 [♡ Dukung pengembangan via Saweria](https://saweria.co/AKaAturDompet)
 
-## Lisensi
+## Lisensi dan disclaimer
 
-Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](LICENSE) untuk detailnya.
+Proyek ini menggunakan [MIT License](LICENSE). Perangkat lunak disediakan apa adanya, tanpa jaminan, dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, serta seluruh keputusan dan risiko trading.
 
-## Disclaimer
+---
 
-Proyek ini disediakan apa adanya, tanpa jaminan, dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, serta seluruh keputusan dan risiko trading yang Anda ambil.
+### English summary
+
+BotIndodax is a Go-based Indodax trading bot for Termux. It monitors one IDR pair and can submit real market BUY/SELL orders based on configured price triggers and locally stored position state. Go 1.27.3 or later is required. Review the Indonesian documentation and source code before use. Trading involves risk; never enable withdrawal permission for the API key.
