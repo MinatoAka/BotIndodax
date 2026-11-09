@@ -108,7 +108,14 @@ func main() {
 
 				// EKSEKUSI SELL
 				case sellSignal && assetBalance <= 0:
-					log.Println("[×] Saldo aset tidak cukup | Order SELL skipped!")
+					log.Println(" [×] Saldo aset 0 | Reset status: KOSONG")
+					state.Status = "KOSONG"
+					state.LastTradeAt = 0
+					
+					if err := saveState(stateFile, state); err != nil {
+						log.Printf("[×] Gagal menyimpan reset status: %v", err)
+					}
+				
 				case sellSignal:
 					result, orderErr := kirimOrder(config, "SELL", price, assetBalance)
 					
