@@ -35,7 +35,7 @@ func main() {
 			return
 		}
 
-		log.Printf("[$] Config => Buy: Rp %s | Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		log.Printf("[$] Go-Buy: Rp %s | Go-Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
 
 		price, err := getTickerPrice(config.Pair)
 		if err != nil {
