@@ -10,7 +10,13 @@
 Bot trading otomatis Indodax berbasis Go untuk Android melalui Termux. Bot memantau satu pair IDR dan mengirim order **market** sesuai trigger harga serta status posisi lokal.
 
 > [!CAUTION]
-> Bot dapat mengirim order nyata dan menggunakan saldo akun Anda. Trading memiliki risiko kerugian dan tidak menjamin keuntungan. Tinjau kode dan konfigurasi sebelum menjalankan. Gunakan API key dengan izin baca dan spot trading saja—**jangan aktifkan izin penarikan**. Anda bertanggung jawab atas transaksi yang dilakukan.
+> Bot dapat mengirim order nyata dan menggunakan saldo akun Anda. Trading memiliki risiko kerugian dan tidak menjamin keuntungan. Tinjau kode dan konfigurasi sebelum menjalankan. Gunakan API key dan secret secara hati-hati, serta aktifkan izin yang benar-benar diperlukan.
+
+## Screenshot
+
+<p align="center">
+  <img src="Screenshot_20261109_214135.jpg" alt="Screenshot BotIndodax" width="720">
+</p>
 
 ## Fitur
 
@@ -83,7 +89,7 @@ Contoh format:
 | `minQty` | Kuantitas aset minimum untuk order BUY. Sesuaikan dengan aturan pair. |
 | `cooldownMs` | Jeda minimum setelah transaksi sukses, dalam milidetik. Nilai `0` menonaktifkan jeda. |
 
-Jangan commit atau membagikan kredensial asli. Jika API key atau secret terungkap, cabut key tersebut dan buat yang baru. Pair, trigger, modal, dan kuantitas juga divalidasi saat konfigurasi dibaca.
+Jangan commit atau membagikan kredensial asli. Jika API key atau secret terungkap, cabut key tersebut dan buat yang baru. Pair, trigger, modal, dan kuantitas juga divalidasi saat konfigurasi dibaca pada saat runtime.
 
 ## Build dan jalankan
 
@@ -110,7 +116,7 @@ Hentikan bot dengan `Ctrl+C`.
 
 ## State dan pengujian
 
-`state.json` dibuat saat runtime. Jika file belum ada, bot memulai dengan status `KOSONG`. File ini menyimpan status posisi dan waktu transaksi terakhir; jangan menghapus atau mengubahnya tanpa memeriksa posisi serta saldo akun.
+`state.json` dibuat saat runtime. Jika file belum ada, bot memulai dengan status `KOSONG`. File ini menyimpan status posisi dan waktu transaksi terakhir; jangan menghapus atau mengubahnya tanpa memahami maksudnya.
 
 Jalankan pengujian lokal dengan:
 
@@ -126,6 +132,7 @@ Pengujian yang tersedia mencakup validasi konfigurasi, pembacaan dan penyimpanan
 BotIndodax/
 ├── LICENSE
 ├── README.md
+├── Screenshot_20261109_214135.jpg
 ├── config.go
 ├── config.json
 ├── go.mod
@@ -142,10 +149,10 @@ BotIndodax/
 
 ## Lisensi dan disclaimer
 
-Proyek ini menggunakan [MIT License](LICENSE). Perangkat lunak disediakan apa adanya, tanpa jaminan, dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, serta seluruh keputusan dan risiko trading.
+Proyek ini menggunakan [MIT License](LICENSE). Perangkat lunak disediakan apa adanya, tanpa jaminan, dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, serta keputusan trading.
 
 ---
 
 ### English summary
 
-BotIndodax is a Go-based Indodax trading bot for Termux. It monitors one IDR pair and can submit real market BUY/SELL orders based on configured price triggers and locally stored position state. Go 1.27.3 or later is required. Review the Indonesian documentation and source code before use. Trading involves risk; never enable withdrawal permission for the API key.
+BotIndodax is a Go-based Indodax trading bot for Termux. It monitors one IDR pair and can submit real market BUY/SELL orders based on configured price triggers and locally stored position state.
