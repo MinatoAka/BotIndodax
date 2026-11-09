@@ -10,7 +10,11 @@
 Bot trading otomatis Indodax berbasis Go untuk Android melalui Termux. Bot memantau satu pair IDR dan mengirim order **market** sesuai trigger harga serta status posisi lokal.
 
 > [!CAUTION]
-> Bot dapat mengirim order nyata dan menggunakan saldo akun Anda. Trading memiliki risiko kerugian dan tidak menjamin keuntungan. Tinjau kode dan konfigurasi sebelum menjalankan. Gunakan API key dan secret secara hati-hati, serta aktifkan izin yang benar-benar diperlukan.
+> Bot dapat mengirim order nyata dan menggunakan saldo akun Anda.
+> Trading memiliki risiko kerugian dan tidak menjamin keuntungan.
+> Tinjau kode dan konfigurasi sebelum menjalankan.
+> Gunakan API key dan secret secara hati-hati, hanya aktifkan izin yang benar-benar diperlukan.
+> Do with your own risk (DWYOR).
 
 ## Screenshot
 
