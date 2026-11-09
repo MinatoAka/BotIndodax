@@ -192,7 +192,7 @@ func countdown(d time.Duration) {
 	defer fmt.Print("\033[?25h")
 	
 	if d <= 0 {
-		fmt.Printf("\r[÷] Menunggu 0 Detik | [%s] 100%% | Sisa: 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
+		fmt.Printf("\r[÷] Time remaining: 00:00:00 | [%s] 100%% \033[K", strings.Repeat("\033[32m█\033[0m", 20))
 		fmt.Println()
 		typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 		return
@@ -200,25 +200,6 @@ func countdown(d time.Duration) {
 
 	startTime := time.Now()
 	endTime := startTime.Add(d)
-
-	totalSeconds := int(math.Ceil(d.Seconds()))
-	hours := totalSeconds / 3600
-	minutes := (totalSeconds % 3600) / 60
-	seconds := totalSeconds % 60
-
-	var durationStr string
-	switch {
-	case hours > 0 && minutes > 0:
-		durationStr = fmt.Sprintf("%d Jam %d Menit", hours, minutes)
-	case hours > 0:
-		durationStr = fmt.Sprintf("%d Jam", hours)
-	case minutes > 0 && seconds > 0:
-		durationStr = fmt.Sprintf("%d Menit %d Detik", minutes, seconds)
-	case minutes > 0:
-		durationStr = fmt.Sprintf("%d Menit", minutes)
-	default:
-		durationStr = fmt.Sprintf("%d Detik", seconds)
-	}
 
 	barLength := 20
 
@@ -257,7 +238,7 @@ func countdown(d time.Duration) {
 		emptyStr := strings.Repeat("\033[90m░\033[0m", barLength-filled)
 		bar := filledStr + emptyStr
 
-		fmt.Printf("\r[÷] Menunggu %s | [%s] %.0f%% | Sisa: %02d:%02d:%02d \033[K", durationStr, bar, percent, h, m, s)
+		fmt.Printf("\r[÷] Time remaining: %02d:%02d:%02d | [%s] %.0f%% \033[K", h, m, s, bar, percent)
 
 		if remaining == 0 {
 			fmt.Println()
@@ -280,7 +261,7 @@ func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
 	if state.LastTradeDay != today {
 		state.DailyTrades = 0
 		state.LastTradeDay = today
-		log.Printf("[✓] New day trade (UTC: %s) | Limit harian reset: 0", today)
+		log.Printf("[✓] New day trade (UTC: %s) | Reset limit: 0", today)
 		
 		if err := saveState(stateFile, *state); err != nil {
 			log.Printf("[×] Gagal menyimpan reset limit harian: %v", err)
