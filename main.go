@@ -141,6 +141,6 @@ func main() {
 			typeWriter("[÷] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
 		
-		countdown(15 * time.Minute)
+		countdown(20 * time.Minute)
 	}
 }
