@@ -141,7 +141,7 @@ func main() {
 		} else {
 			typeWriter("[÷] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
-		
-		countdown(20 * time.Minute)
+		countTime := time.Duration(config.PollingInterval)
+		countdown(countTime * time.Minute)
 	}
 }
