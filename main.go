@@ -58,7 +58,8 @@ func main() {
 			if err != nil {
 				log.Printf("[×] Gagal mengambil saldo | Order stopped! %v", err)
 			} else {
-				cooldownActive := state.LastTradeAt > 0 && nowMillis-state.LastTradeAt < config.CooldownMs
+                cooldownMs := int64(config.CooldownMinutes) * 60 * 1000
+                cooldownActive := state.LastTradeAt > 0 && nowMillis-state.LastTradeAt < cooldownMs
 
 				switch {
 				case cooldownActive:
