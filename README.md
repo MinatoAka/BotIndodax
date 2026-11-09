@@ -89,6 +89,7 @@ Contoh format:
 | `modalPerTrade` | Nominal IDR yang digunakan untuk menghitung order BUY. |
 | `minQty` | Kuantitas aset minimum untuk order BUY. Sesuaikan dengan aturan pair. |
 | `cooldownMinutes` | Jeda minimum setelah transaksi sukses, dalam milidetik. Nilai `0` menonaktifkan jeda. |
+| `pollingInterval` | Interval siklus bot dijalankan ulang (dalam menit) |
 
 Jangan commit atau membagikan kredensial asli. Jika API key atau secret terungkap, cabut key tersebut dan buat yang baru. Pair, trigger, modal, dan kuantitas juga divalidasi saat konfigurasi dibaca pada saat runtime.
 
