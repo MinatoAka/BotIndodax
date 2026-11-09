@@ -33,7 +33,6 @@ func main() {
 			return
 		}
 
-		resetDailyCounterIfNeeded(&state, stateFile, config.MaxDailyTrades)
 		log.Printf("[$] Config => Buy: Rp %s | Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
 
 		price, err := getTickerPrice(config.Pair)
@@ -48,7 +47,6 @@ func main() {
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
-		todayUTC := now.Add(-7 * time.Hour).Format("2006-01-02")
 
 		buySignal := state.Status == "KOSONG" && price <= config.BuyTrigger
 		sellSignal := state.Status == "PEGANG" && price >= config.SellTrigger
@@ -59,13 +57,10 @@ func main() {
 				log.Printf("[×] Gagal mengambil saldo | Order stopped! %v", err)
 			} else {
 				cooldownActive := state.LastTradeAt > 0 && nowMillis-state.LastTradeAt < config.CooldownMs
-				limitReached := state.DailyTrades >= config.MaxDailyTrades
 
 				switch {
 				case cooldownActive:
 					log.Println("[×] Cooldown aktif | Order skipped!")
-				case limitReached:
-					log.Println("[×] Batas harian tercapai | Order skipped!")
 				
 				// EKSEKUSI BUY
 				case buySignal && idrBalance < config.ModalPerTrade:
@@ -90,8 +85,6 @@ func main() {
 							
 							state.Status = "PEGANG"
 							state.LastTradeAt = nowMillis
-							state.DailyTrades++
-							state.LastTradeDay = todayUTC
 							
 							if err := saveState(stateFile, state); err != nil {
 								log.Printf("[×] State gagal disimpan: %v", err)
@@ -106,7 +99,7 @@ func main() {
 						}
 					}
 
-				// EKSEKUSI SELL
+				// EKSEKUSI SELL & SATPAM DESYNC
 				case sellSignal && assetBalance <= 0:
 					log.Println(" [×] Saldo aset 0 | Reset status: KOSONG")
 					state.Status = "KOSONG"
@@ -129,8 +122,6 @@ func main() {
 						
 						state.Status = "KOSONG"
 						state.LastTradeAt = nowMillis
-						state.DailyTrades++
-						state.LastTradeDay = todayUTC
 						
 						if err := saveState(stateFile, state); err != nil {
 							log.Printf("[×] State gagal disimpan: %v", err)
@@ -149,6 +140,6 @@ func main() {
 			typeWriter("[÷] Sabar bos, kita ngopi dulu...", 40*time.Millisecond)
 		}
 		
-		countdown(30 * time.Minute)
+		countdown(15 * time.Minute)
 	}
 }
