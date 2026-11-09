@@ -43,7 +43,7 @@ func main() {
 			continue
 		}
 		log.Printf("[•] Pair: %s", strings.ToUpper(config.Pair))
-		log.Printf("[$] Harga: Rp %s", formatRupiah(price))
+		log.Printf("[$] Price: Rp %s", formatRupiah(price))
 		log.Printf("[•] Status: %s", state.Status)
 
 		now := time.Now()
