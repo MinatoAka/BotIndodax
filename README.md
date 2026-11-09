@@ -82,11 +82,11 @@ Contoh format:
 | Field | Keterangan |
 | --- | --- |
 | `apiKey` | API key Indodax TAPI v2. Wajib diisi. |
-| `secretKey` | Secret key pasangan API key. Wajib diisi dan dirahasiakan. |
+| `secretKey` | Secret key pasangan API key. |
 | `pair` | Pair IDR huruf kecil, misalnya `ethidr`. |
 | `buyTrigger` | Harga pemicu BUY; harus berupa angka positif. |
 | `sellTrigger` | Harga pemicu SELL; harus lebih besar dari `buyTrigger`. |
-| `modalPerTrade` | Nominal IDR yang digunakan untuk menghitung order BUY. |
+| `modalPerTrade` | Modal minimal yang digunakan untuk trading, dalam IDR. |
 | `minQty` | Kuantitas aset minimum untuk order BUY. Sesuaikan dengan aturan pair. |
 | `cooldownMinutes` | Jeda minimum setelah transaksi sukses, dalam menit.|
 | `pollingInterval` | Interval siklus bot dijalankan ulang, dalam menit. |
