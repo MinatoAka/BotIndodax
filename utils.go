@@ -5,27 +5,24 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"path/filepath"
-	"os/signal"
 	"fmt"
-	"log"
-	"net/url"
-	"os/exec"
-	"os"
-	"sort"
 	"math"
-	"strings"
+	"net/url"
+	"os"
+	"os/exec"
+	"os/signal"
+	"path/filepath"
+	"sort"
 	"strconv"
-	"unicode"
+	"strings"
 	"syscall"
 	"time"
+	"unicode"
 )
 
 type State struct {
-	Status       string `json:"status"`
-	LastTradeAt  int64  `json:"lastTradeAt"`
-	DailyTrades  int    `json:"dailyTrades"`
-	LastTradeDay string `json:"lastTradeDay"`
+	Status      string `json:"status"`
+	LastTradeAt int64  `json:"lastTradeAt"`
 }
 
 func setupGracefulShutdown() {
@@ -61,7 +58,7 @@ func loadState(filename string) (State, error) {
 	if state.Status != "KOSONG" && state.Status != "PEGANG" {
 		return State{}, fmt.Errorf("status state tidak dikenal: %q", state.Status)
 	}
-	if state.DailyTrades < 0 || state.LastTradeAt < 0 {
+	if state.LastTradeAt < 0 {
 		return State{}, fmt.Errorf("state berisi nilai transaksi negatif")
 	}
 	return state, nil
@@ -254,27 +251,6 @@ func countdown(d time.Duration) {
 	}
 }
 
-func resetDailyCounterIfNeeded(state *State, stateFile string, maxTrades int) {
-	now := time.Now()
-	today := now.Add(-7 * time.Hour).Format("2006-01-02")
-
-	if state.LastTradeDay != today {
-		state.DailyTrades = 0
-		state.LastTradeDay = today
-		log.Printf("[✓] New day trade (UTC: %s) | Reset limit: 0", today)
-		
-		if err := saveState(stateFile, *state); err != nil {
-			log.Printf("[×] Gagal menyimpan reset limit harian: %v", err)
-		}
-	} else {
-		sisa := maxTrades - state.DailyTrades
-		if sisa < 0 {
-			sisa = 0
-		}
-		log.Printf("[•] Limit harian: %d/%d terpakai | Sisa kuota: %d trade", state.DailyTrades, maxTrades, sisa)
-	}
-}
-
 func clearTerminal() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
@@ -298,5 +274,5 @@ func printBanner() {
     $$ |  $$ |$$ | \$$\\$$$$$$$ |
     \__|  \__|\__|  \__|\_______|`)
     fmt.Printf("%s", reset)
-	fmt.Printf("%s%s  BotIndodax — Trading Engine V1.0%s\n\n", white, bold, reset)
+	fmt.Printf("%s%s  BotIndodax — Trading Engine V1.1%s\n\n", white, bold, reset)
 }
