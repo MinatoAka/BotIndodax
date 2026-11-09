@@ -189,7 +189,7 @@ func countdown(d time.Duration) {
 	defer fmt.Print("\033[?25h")
 	
 	if d <= 0 {
-		fmt.Printf("\r[÷] Time remaining: 00:00:00 | [%s] 100%% \033[K", strings.Repeat("\033[32m█\033[0m", 20))
+		fmt.Printf("\r[÷] Time remaining:  100%% [%s] 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
 		fmt.Println()
 		typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
 		return
@@ -235,7 +235,7 @@ func countdown(d time.Duration) {
 		emptyStr := strings.Repeat("\033[90m░\033[0m", barLength-filled)
 		bar := filledStr + emptyStr
 
-		fmt.Printf("\r[÷] Time remaining: %02d:%02d:%02d | [%s] %.0f%% \033[K", h, m, s, bar, percent)
+		fmt.Printf("\r[÷] Time remaining:  %.0f%% [%s] %02d:%02d:%02d \033[K", percent, bar, h, m, s)
 
 		if remaining == 0 {
 			fmt.Println()
