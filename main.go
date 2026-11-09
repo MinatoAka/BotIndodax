@@ -17,6 +17,7 @@ func main() {
 	if errLoc == nil {
 		time.Local = loc
 	}
+	typeWriter("[•] ========================================", 40*time.Millisecond)
 	typeWriter("[✓] BotIndodax starting | Bismillahirrahmanirrahim...", 40*time.Millisecond)
 
 	for {
