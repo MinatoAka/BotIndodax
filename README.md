@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://go.dev/"><img src="https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go 1.22+"></a>
+  <a href="https://termux.dev/"><img src="https://img.shields.io/badge/Platform-Termux-2E8B57?style=for-the-badge&logo=android&logoColor=white" alt="Platform: Termux"></a>
+  <a href="https://saweria.co/AKaAturDompet"><img src="https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Support via Saweria"></a>
+</p>
+
 # BotIndodax
 
 Bot trading Indodax berbasis Go untuk Termux. Bot memantau satu pair IDR dan mengirim order **market** otomatis berdasarkan batas harga yang dikonfigurasi.
