@@ -1,39 +1,24 @@
-[![Go Version](https://img.shields.io/badge/Go-1.22%2B-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/)
-[![Platform](https://img.shields.io/badge/Platform-Termux-2E8B57?style=for-the-badge&logo=android&logoColor=white)](https://termux.dev/)
-[![Support via Saweria](https://img.shields.io/badge/Support-Saweria-FF5722?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://saweria.co/AKaAturDompet)
----
-
-```markdown
 # BotIndodax
 
-Bot trading Indodax berbasis Go untuk dijalankan melalui terminal Android (Termux).
-Bot memantau satu pair dan dapat mengirim order `MARKET` bukan `LIMIT` menggunakan
-API key akun Anda secara otomatis.
+Bot trading Indodax berbasis Go untuk Termux. Bot memantau satu pair IDR dan mengirim order **market** otomatis berdasarkan batas harga yang dikonfigurasi.
 
 > [!CAUTION]
-> Bot dapat melakukan transaksi dengan saldo asli dan menyebabkan kerugian.
-> Tidak ada jaminan keuntungan.
-> Periksa kode, konfigurasi, dan izin API key sebelum menjalankan bot.
-> Jangan aktifkan izin penarikan (withdrawal) pada API key.
-> DWYOR (Do With Your Own Risk)
+> Bot dapat melakukan transaksi dengan dana asli dan menyebabkan kerugian. Tidak ada jaminan keuntungan. Periksa kode dan konfigurasi sebelum menjalankan. Gunakan API key dengan izin baca dan spot trading saja—**jangan aktifkan izin penarikan**. Anda bertanggung jawab atas seluruh transaksi.
 
 ## Fitur
 
-- Membaca harga ticker dan saldo akun Indodax secara `real-time`.
-- Membeli ketika status lokal `KOSONG` dan harga sama dengan atau di bawah `buyTrigger`.
-- Menjual ketika status lokal `PEGANG` dan harga sama dengan atau di atas `sellTrigger`.
-- Menyimpan status transaksi, waktu transaksi terakhir, dan batas transaksi harian di `state.json`.
-- Memuat ulang `config.json` di setiap iterasi.
-- Memvalidasi konfigurasi serta menangani kegagalan API dengan lebih aman (HTTP Timeout).
-- Menghentikan bot bila hasil pengiriman order tidak pasti.
-- Menampilkan `countdown` (hitung mundur) yang informatif di terminal.
+- Memantau ticker dan saldo akun Indodax.
+- Membeli saat status bot `KOSONG` dan harga mencapai atau berada di bawah `buyTrigger`.
+- Menjual saat status bot `PEGANG` dan harga mencapai atau berada di atas `sellTrigger`.
+- Menyimpan status transaksi dan batas transaksi harian di `state.json`.
+- Memuat ulang `config.json` setiap iterasi.
+- Menghentikan bot jika hasil pengiriman order tidak dapat dipastikan.
 
 ## Persyaratan
 
 - Android dengan Termux dan koneksi internet.
-- Go terpasang (`pkg install golang`).
-- Akun Indodax dan API key TAPI v2 dengan izin baca dan spot trading.
-  Jangan beri izin penarikan (`WITHDRAWAL`).
+- Go 1.22 atau lebih baru.
+- Akun Indodax dan API key TAPI v2 dengan izin baca serta spot trading. Jangan beri izin `WITHDRAWAL`.
 
 ## Instalasi
 
@@ -44,35 +29,18 @@ pkg install git golang nano
 
 git clone https://github.com/MinatoAka/BotIndodax.git
 cd BotIndodax
-
-# Download dependencies (jika ada) dan siapkan go.mod
 go mod tidy
-```
-
-## Struktur project
-
-```text
-BotIndodax/
-├── README.md
-├── config.go       # pemuatan dan validasi konfigurasi
-├── config.json     # konfigurasi lokal dan kredensial
-├── go.mod          # Definisi Go module
-├── main.go         # loop utama dan keputusan transaksi
-├── market.go       # ticker dan saldo melalui API
-├── order.go        # pengiriman dan pemeriksaan respons order
-├── utils.go        # state, signature, query string, dan helper kuantitas
-└── utils_test.go   # tes helper (tidak masuk ke binary aplikasi)
 ```
 
 ## Konfigurasi
 
-Bot membaca config.json dari direktori kerja. Buka file konfigurasi dan masukkan API key/secret Anda:
+Edit `config.json` dan masukkan kredensial API Anda:
 
 ```sh
 nano config.json
 ```
 
-Contoh format:
+Contoh konfigurasi:
 
 ```json
 {
@@ -88,76 +56,51 @@ Contoh format:
 }
 ```
 
-**Field Keterangan**
-- apiKey API key Indodax TAPI v2 dengan izin baca dan spot trading.
-- secretKey Secret key pasangan API key; rahasiakan!
-- pair Pair IDR, huruf kecil, misalnya ethidr.
-- buyTrigger Batas harga maksimum untuk sinyal beli.
-- sellTrigger Batas harga minimum untuk sinyal jual; harus lebih besar dari buyTrigger.
-- modalPerTrade Nominal IDR yang direncanakan untuk pembelian.
-- minQty Kuantitas aset minimum sesuai aturan pair.
-- cooldownMs Jeda minimum antar transaksi dalam milidetik.
-- maxDailyTrades Batas transaksi harian yang dikonfigurasi.
+| Field | Keterangan |
+| --- | --- |
+| `apiKey` | API key Indodax TAPI v2 dengan izin baca dan spot trading. |
+| `secretKey` | Secret key pasangan API key; simpan secara rahasia. |
+| `pair` | Pair IDR dalam huruf kecil, misalnya `ethidr`. |
+| `buyTrigger` | Batas harga untuk sinyal beli. |
+| `sellTrigger` | Batas harga untuk sinyal jual; harus lebih besar dari `buyTrigger`. |
+| `modalPerTrade` | Nominal IDR yang direncanakan untuk pembelian. |
+| `minQty` | Kuantitas aset minimum sesuai aturan pair. |
+| `cooldownMs` | Jeda minimum antartransaksi dalam milidetik. |
+| `maxDailyTrades` | Batas jumlah transaksi harian. |
 
-Pastikan pair dan aturan jumlah/nominal minimum sesuai ketentuan pasar Indodax.
-Jangan unggah atau commit config.json berisi kredensial.
-Jika kredensial pernah terpublikasi, segera cabut dan buat `APi_KEY`.
+Pastikan pair serta batas minimum jumlah dan nominal sesuai aturan pasar Indodax. Jangan unggah atau commit `config.json` yang berisi kredensial. Jika kredensial terungkap, cabut API key tersebut dan buat yang baru.
 
-## Menjalankan pengujian
+## Pengujian
 
-Tes ini memeriksa validasi konfigurasi, perilaku pembacaan dan penyimpanan state, serta konsistensi query string. Tes tidak mengirim order ke Indodax.
+Pengujian tidak mengirim order ke Indodax.
 
 ```sh
-go test -v ./...
+go test ./...
 ```
 
-Jika ingin menjalankan satu tes tertentu:
+## Build dan jalankan
+
+Jalankan dari direktori repository agar `config.json` dan `state.json` dapat ditemukan.
 
 ```sh
-go test -run TestBuildQueryStringDeterministic -v
-```
-
-## Build dan menjalankan bot
-
-Sangat disarankan untuk melakukan build (compile) menjadi satu binary agar bot berjalan lebih ringan dan hemat RAM di HP.
-
-```sh
-# Compile semua file .go di folder ini menjadi file bernama 'bot'
 go build -o bot .
-
-# Jalankan bot
 ./bot
 ```
 
-Atau jalankan langsung tanpa membuat binary (cocok untuk tahap testing kode):
+Untuk menjalankan tanpa membuat binary:
 
 ```sh
 go run .
 ```
 
-## ⚠️ PENTING UNTUK ANDROID:
-Jalankan bot dari direktori repository agar config.json dan state.json ditemukan.
-Sebelum menjalankan bot, sangat disarankan untuk mengetik perintah berikut di Termux.
+Di Termux, gunakan `termux-wake-lock` agar perangkat tidak masuk mode tidur selama bot berjalan. Hentikan bot dengan `Ctrl+C`.
 
-```sh
-termux-wake-lock
-```
+Bot mengirim order market secara nyata saat kondisi konfigurasi terpenuhi. Jika request order mengalami timeout atau responsnya tidak jelas, periksa order dan saldo akun Indodax sebelum menjalankan bot kembali.
 
-Hentikan bot dengan
-```sh
-Ctrl + C.
-```
-Bot mengirim order market secara nyata jika sinyal dan batas konfigurasi terpenuhi.
-Jika request order mengalami timeout atau hasil respons tidak dapat dipastikan, 
-periksa order dan saldo di akun indodax anda.
+## Dukungan
 
-## Dukungan (Support)
-
-Jika proyek ini bermanfaat dan membantu Anda, Anda bisa mentraktir saya secangkir kopi untuk mendukung pengembangan selanjutnya. Terima kasih!
-
-[☕ Dukung via Saweria](https://saweria.co/AKaAturDompet)
+[♡ Dukung pengembangan via Saweria](https://saweria.co/AKaAturDompet)
 
 ## Disclaimer
-Proyek ini disediakan apa adanya, tanpa jaminan apa pun dan bukan nasihat investasi.
-Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, dan seluruh keputusan trading.
-```
+
+Proyek ini disediakan apa adanya, tanpa jaminan, dan bukan nasihat investasi. Anda bertanggung jawab atas keamanan API key, konfigurasi, pemantauan bot, serta seluruh keputusan dan risiko trading.
