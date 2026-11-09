@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 	"strings"
 	"time"
 )
@@ -34,8 +35,8 @@ func main() {
 			log.Printf("[×] State tidak dapat dibaca | Bot stopped! %v", err)
 			return
 		}
-
-		log.Printf("[$] Go-Buy: Rp %s | Go-Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		configMsg := fmt.Sprintf("[$] Go-Buy: Rp %s | Go-Sell: Rp %s", formatRupiah(config.BuyTrigger), formatRupiah(config.SellTrigger))
+		typeWriter(configMsg, 40*time.Millisecond)
 
 		price, err := getTickerPrice(config.Pair)
 		if err != nil {
@@ -43,15 +44,16 @@ func main() {
 			time.Sleep(5 * time.Minute)
 			continue
 		}
-		log.Printf("[•] Pair: %s", strings.ToUpper(config.Pair))
-		time.Sleep(1 * time.Second)
-		log.Printf("[$] Price: Rp %s", formatRupiah(price))
-		time.Sleep(1 * time.Second)
-		log.Printf("[•] Status: %s", state.Status)
-		time.Sleep(1 * time.Second)
-
+		pairMsg := fmt.Sprintf("[•] Pair: %s", strings.ToUpper(config.Pair))
+		priceMsg := fmt.Sprintf("[$] Price: Rp %s", formatRupiah(price))
+		statusMsg := fmt.Sprintf("[•] Status: %s", state.Status)
+		
 		now := time.Now()
 		nowMillis := now.UnixMilli()
+		
+		typeWriter(pairMsg, 40*time.Millisecond)
+		typeWriter(priceMsg, 40*time.Millisecond)
+		typeWriter(statusMsg, 40*time.Millisecond)
 
 		buySignal := state.Status == "KOSONG" && price <= config.BuyTrigger
 		sellSignal := state.Status == "PEGANG" && price >= config.SellTrigger
@@ -61,7 +63,7 @@ func main() {
 			if err != nil {
 				log.Printf("[×] Gagal mengambil saldo | Order stopped! %v", err)
 			} else {
-                cooldownMs := int64(config.CooldownMinutes) * 60 * 1000
+				cooldownMs := int64(config.CooldownMinutes) * 60 * 1000
                 cooldownActive := state.LastTradeAt > 0 && nowMillis-state.LastTradeAt < cooldownMs
 
 				switch {
