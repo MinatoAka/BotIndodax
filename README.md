@@ -74,7 +74,8 @@ Contoh format:
   "sellTrigger": 34453500,
   "modalPerTrade": 15000,
   "minQty": 0.0001,
-  "cooldownMs": 1800000
+  "cooldownMinutes": 15,
+  "pollingInterval": 15
 }
 ```
 
