@@ -133,7 +133,6 @@ Pengujian yang tersedia mencakup validasi konfigurasi, pembacaan dan penyimpanan
 BotIndodax/
 ├── LICENSE
 ├── README.md
-├── Screenshot_20261109_214135.jpg
 ├── config.go
 ├── config.json
 ├── go.mod
