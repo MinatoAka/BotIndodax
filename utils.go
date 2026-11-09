@@ -192,8 +192,9 @@ func countdown(d time.Duration) {
 		fmt.Printf("\r[÷] Time remaining:  100%% [%s] 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
 		time.Sleep(1 * time.Second)
 		fmt.Print("\r\033[2K")
+		typeWriter("[•] =============================================", 40*time.Millisecond)
 		typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
-		typeWriter("[•] ========================================", 40*time.Millisecond)
+		typeWriter("[•] =============================================", 40*time.Millisecond)
 		return
 	}
 
@@ -242,8 +243,9 @@ func countdown(d time.Duration) {
 		if remaining == 0 {
 			time.Sleep(1 * time.Second)
 			fmt.Print("\r\033[2K")
+			typeWriter("[•] =============================================", 40*time.Millisecond)
 			typeWriter("[✓] Waktu tunggu selesai | Lanjut cek market...", 40*time.Millisecond)
-			typeWriter("[•] ========================================", 40*time.Millisecond)
+			typeWriter("[•] =============================================", 40*time.Millisecond)
 			return
 		}
 
