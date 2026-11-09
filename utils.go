@@ -282,5 +282,5 @@ func printBanner() {
     $$ |  $$ |$$ | \$$\\$$$$$$$ |
     \__|  \__|\__|  \__|\_______|`)
     fmt.Printf("%s", reset)
-	fmt.Printf("%s%s  BotIndodax — Trading Engine V1.1%s\n\n", white, bold, reset)
+	fmt.Printf("%s%s  BotIndodax — Trading Engine V1.2%s\n\n", white, bold, reset)
 }
