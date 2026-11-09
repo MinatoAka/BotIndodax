@@ -16,7 +16,7 @@ type Config struct {
 	SellTrigger     float64 `json:"sellTrigger"`
 	ModalPerTrade   float64 `json:"modalPerTrade"`
 	MinQty          float64 `json:"minQty"`
-	CooldownMs      int64   `json:"cooldownMs"`
+	CooldownMinutes int     `json:"cooldownMinutes"`
 	PollingInterval int     `json:"pollingInterval"`
 }
 
@@ -55,11 +55,11 @@ func (c Config) validate() error {
 	if !isFinitePositive(c.ModalPerTrade) || !isFinitePositive(c.MinQty) {
 		return fmt.Errorf("modalPerTrade dan minQty harus berupa angka positif")
 	}
-	if c.CooldownMs < 0 {
-		return fmt.Errorf("cooldownMs tidak boleh negatif")
+	if c.CooldownMinutes < 0 {
+		return fmt.Errorf("cooldownMinutes tidak boleh negatif")
 	}
 	if c.PollingInterval <= 0 {
-		return fmt.Errorf("pollingInterval (menit) harus lebih besar dari 0")
+		return fmt.Errorf("pollingInterval harus lebih besar dari 0")
 	}
 	return nil
 }
