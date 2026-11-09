@@ -15,7 +15,7 @@ Bot trading otomatis Indodax berbasis Go untuk Android melalui Termux. Bot meman
 ## Screenshot
 
 <p align="center">
-  <img src="Screenshot_20261109_214135.jpg" alt="Screenshot BotIndodax" width="720">
+  <img src="Screenshot_20261109_232550.jpg" alt="Screenshot BotIndodax" width="720">
 </p>
 
 ## Fitur
