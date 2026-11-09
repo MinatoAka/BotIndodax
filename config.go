@@ -9,15 +9,14 @@ import (
 )
 
 type Config struct {
-	ApiKey         string  `json:"apiKey"`
-	SecretKey      string  `json:"secretKey"`
-	Pair           string  `json:"pair"`
-	BuyTrigger     float64 `json:"buyTrigger"`
-	SellTrigger    float64 `json:"sellTrigger"`
-	ModalPerTrade  float64 `json:"modalPerTrade"`
-	MinQty         float64 `json:"minQty"`
-	CooldownMs     int64   `json:"cooldownMs"`
-	MaxDailyTrades int     `json:"maxDailyTrades"`
+	ApiKey        string  `json:"apiKey"`
+	SecretKey     string  `json:"secretKey"`
+	Pair          string  `json:"pair"`
+	BuyTrigger    float64 `json:"buyTrigger"`
+	SellTrigger   float64 `json:"sellTrigger"`
+	ModalPerTrade float64 `json:"modalPerTrade"`
+	MinQty        float64 `json:"minQty"`
+	CooldownMs    int64   `json:"cooldownMs"`
 }
 
 func loadConfig(filename string) (Config, error) {
@@ -57,9 +56,6 @@ func (c Config) validate() error {
 	}
 	if c.CooldownMs < 0 {
 		return fmt.Errorf("cooldownMs tidak boleh negatif")
-	}
-	if c.MaxDailyTrades <= 0 {
-		return fmt.Errorf("maxDailyTrades harus lebih besar dari 0")
 	}
 	return nil
 }
