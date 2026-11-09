@@ -44,8 +44,11 @@ func main() {
 			continue
 		}
 		log.Printf("[•] Pair: %s", strings.ToUpper(config.Pair))
+		time.Sleep(1 * time.Second)
 		log.Printf("[$] Price: Rp %s", formatRupiah(price))
+		time.Sleep(1 * time.Second)
 		log.Printf("[•] Status: %s", state.Status)
+		time.Sleep(1 * time.Second)
 
 		now := time.Now()
 		nowMillis := now.UnixMilli()
