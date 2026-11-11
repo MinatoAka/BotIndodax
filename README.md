@@ -23,12 +23,6 @@ Bot trading otomatis Indodax berbasis Go untuk Android melalui Termux. Bot meman
 > Gunakan API key dan secret secara hati-hati, hanya aktifkan izin yang benar-benar diperlukan.
 > Do with your own risk (DWYOR).
 
-## Screenshot
-
-<p align="center">
-  <img src="Screenshot_20261109_232550.jpg" alt="Screenshot BotIndodax" width="720">
-</p>
-
 ## Fitur
 
 - Membaca harga ticker dari endpoint publik Indodax dan saldo akun melalui API v2.
