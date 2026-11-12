@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/MinatoAka/hmacgo"
 )
 
 func getTickerPrice(pair string) (float64, error) {
@@ -52,8 +54,8 @@ func getBalances(config Config) (float64, float64, error) {
 		"timestamp":  strconv.FormatInt(time.Now().UnixMilli(), 10),
 		"recvWindow": "5000",
 	}
-	query := buildQueryString(params)
-	signature := getIndodaxSignature(query, config.SecretKey)
+	query := hmacgo.BuildQuery(params)
+    signature := hmacgo.SignSHA256(query, config.SecretKey)
 	endpoint := "https://api.indodax.com/api/v2/account?" + query
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, endpoint, nil)
 	if err != nil {
