@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/MinatoAka/hmacgo"
 )
 
 type OrderResult struct {
@@ -48,8 +50,8 @@ func kirimOrder(config Config, side string, price float64, qty float64) (OrderRe
 		params["quantity"] = formatQty(qty)
 	}
 
-	body := buildQueryString(params)
-	signature := getIndodaxSignature(body, config.SecretKey)
+	body := hmacgo.BuildQuery(params)
+	signature := hmacgo.SignSHA256(body, config.SecretKey)
 	req, err := http.NewRequest(http.MethodPost, "https://api.indodax.com/api/v2/order", bytes.NewBufferString(body))
 	if err != nil {
 		return OrderResult{}, fmt.Errorf("create order request: %w", err)
