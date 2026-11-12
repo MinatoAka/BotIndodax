@@ -13,18 +13,16 @@ import (
 	"time"
 )
 
-var httpClient = &http.Client{Timeout: 15 * time.Second}
-
 func getTickerPrice(pair string) (float64, error) {
 	endpoint := "https://indodax.com/api/ticker/" + url.PathEscape(strings.ToLower(pair))
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, endpoint, nil)
 	if err != nil {
 		return 0, fmt.Errorf("create ticker request: %w", err)
 	}
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:159.0) Gecko/20100101 Firefox/159.0")
 	req.Header.Set("Accept", "application/json, text/plain, */*")
+	// User-Agent otomatis di-inject oleh myhttp di config.go
 
-	resp, err := httpClient.Do(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return 0, fmt.Errorf("request ticker: %w", err)
 	}
@@ -65,7 +63,7 @@ func getBalances(config Config) (float64, float64, error) {
 	req.Header.Set("X-APIKEY", config.ApiKey)
 	req.Header.Set("Sign", signature)
 
-	resp, err := httpClient.Do(req)
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return 0, 0, fmt.Errorf("request account balances: %w", err)
 	}
