@@ -6,6 +6,17 @@ import (
 	"math"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/MinatoAka/myhttp"
+)
+
+// SHARED HTTP CLIENT — dipakai market.go, order.go, dan file lain
+var HTTPClient = myhttp.New(
+	myhttp.WithRetry(3, 1*time.Second),      // Retry 3x untuk error 5xx / network
+	myhttp.WithRateLimit(5),                  // Max 5 request/detik
+	myhttp.WithTimeout(15*time.Second),       // Timeout per request
+	myhttp.WithUserAgent("BotIndodax/1.0"),   // UA otomatis
 )
 
 type Config struct {
