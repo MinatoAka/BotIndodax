@@ -16,7 +16,7 @@ var HTTPClient = myhttp.New(
 	myhttp.WithRetry(3, 1*time.Second),      // Retry 3x untuk error 5xx / network
 	myhttp.WithRateLimit(5),                  // Max 5 request/detik
 	myhttp.WithTimeout(15*time.Second),       // Timeout per request
-	myhttp.WithUserAgent("BotIndodax/1.0"),   // UA otomatis
+	myhttp.WithUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 15.8; rv:159.0) Gecko/20100101 Firefox/159.0"),
 )
 
 type Config struct {
