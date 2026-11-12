@@ -1,18 +1,13 @@
 package main
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math"
-	"net/url"
 	"os"
 	"os/exec"
 	"os/signal"
 	"path/filepath"
-	"sort"
 	"strconv"
 	"strings"
 	"syscall"
@@ -27,13 +22,11 @@ type State struct {
 
 func setupGracefulShutdown() {
 	c := make(chan os.Signal, 1)
-	
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	
+
 	go func() {
-		<-c 
-		
-		fmt.Print("\033[?25h") 
+		<-c
+		fmt.Print("\033[?25h")
 		os.Exit(0)
 	}()
 }
@@ -69,63 +62,41 @@ func saveState(filename string, state State) error {
 	if err != nil {
 		return fmt.Errorf("encode state: %w", err)
 	}
-	
+
 	if err := os.MkdirAll(filepath.Dir(filename), 0700); err != nil {
 		return fmt.Errorf("create state directory: %w", err)
 	}
-	
+
 	tempFile, err := os.CreateTemp(filepath.Dir(filename), ".state-*.tmp")
 	if err != nil {
 		return fmt.Errorf("create temporary state file: %w", err)
 	}
 	tempName := tempFile.Name()
-	defer os.Remove(tempName) 
+	defer os.Remove(tempName)
 	if err := tempFile.Chmod(0600); err != nil {
 		tempFile.Close()
 		return fmt.Errorf("secure temporary state file: %w", err)
 	}
-	
+
 	if _, err := tempFile.Write(data); err != nil {
 		tempFile.Close()
 		return fmt.Errorf("write temporary state file: %w", err)
 	}
-	
+
 	if err := tempFile.Sync(); err != nil {
 		tempFile.Close()
 		return fmt.Errorf("sync temporary state file: %w", err)
 	}
-	
+
 	if err := tempFile.Close(); err != nil {
 		return fmt.Errorf("close temporary state file: %w", err)
 	}
-	
+
 	if err := os.Rename(tempName, filename); err != nil {
 		return fmt.Errorf("replace state file: %w", err)
 	}
-	
+
 	return nil
-}
-
-func getIndodaxSignature(payloadString, secretKey string) string {
-	h := hmac.New(sha256.New, []byte(secretKey))
-	_, _ = h.Write([]byte(payloadString))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func buildQueryString(params map[string]string) string {
-	keys := make([]string, 0, len(params))
-	for key := range params {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	values := url.Values{}
-	for _, key := range keys {
-		if params[key] != "" {
-			values.Set(key, params[key])
-		}
-	}
-	return values.Encode()
 }
 
 func formatQty(qty float64) string {
@@ -167,11 +138,11 @@ func formatRupiah(n float64) string {
 func typeWriter(text string, speed time.Duration) {
 	timestamp := time.Now().Format("2006/01/02 15:04:05")
 	fmt.Printf("%s ", timestamp)
-	
+
 	chars := []rune(text)
 	for i, char := range chars {
 		fmt.Printf("%c", char)
-		
+
 		if i == len(chars)-1 {
 			continue
 		}
@@ -187,7 +158,7 @@ func typeWriter(text string, speed time.Duration) {
 func countdown(d time.Duration) {
 	fmt.Print("\033[?25l")
 	defer fmt.Print("\033[?25h")
-	
+
 	if d <= 0 {
 		fmt.Printf("\r[÷] Time remaining:  100%% [%s] 00:00:00 \033[K", strings.Repeat("\033[32m█\033[0m", 20))
 		time.Sleep(1 * time.Second)
@@ -201,7 +172,6 @@ func countdown(d time.Duration) {
 
 	startTime := time.Now()
 	endTime := startTime.Add(d)
-
 	barLength := 20
 
 	for {
@@ -281,6 +251,6 @@ func printBanner() {
     $$ |  $$ |$$ |\$$\ $$  __$$ |
     $$ |  $$ |$$ | \$$\\$$$$$$$ |
     \__|  \__|\__|  \__|\_______|`)
-    fmt.Printf("%s", reset)
+	fmt.Printf("%s", reset)
 	fmt.Printf("%s%s  BotIndodax — Trading Engine V1.2%s\n\n", white, bold, reset)
 }
