@@ -59,15 +59,18 @@ func kirimOrder(config Config, side string, price float64, qty float64) (OrderRe
 	req.Header.Set("X-APIKEY", config.ApiKey)
 	req.Header.Set("Sign", signature)
 
-	resp, err := httpClient.Do(req)
+	// Gunakan Smart Hub (HTTPClient dari config.go) yang sudah ada Retry, Rate Limit, & UA
+	resp, err := HTTPClient.Do(req)
 	if err != nil {
 		return OrderResult{}, fmt.Errorf("order request outcome is unknown; reconcile the order in Indodax before restarting: %w", err)
 	}
 	defer resp.Body.Close()
+	
 	responseBody, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
 		return OrderResult{}, fmt.Errorf("order submitted but response could not be read; reconcile in Indodax: %w", err)
 	}
+	
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		var apiErr indodaxAPIError
 		if json.Unmarshal(responseBody, &apiErr) == nil && apiErr.Msg != "" {
