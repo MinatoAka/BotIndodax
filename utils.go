@@ -103,7 +103,10 @@ func formatQty(qty float64) string {
 	if qty <= 0 {
 		return "0"
 	}
-	formatted := fmt.Sprintf("%.8f", qty)
+	// FLOOR ke 8 desimal dulu, baru format.
+	// Ini memastikan angka tidak pernah DIBULATKAN KE ATAS.
+	floored := math.Floor(qty*1e8) / 1e8
+	formatted := fmt.Sprintf("%.8f", floored)
 	formatted = strings.TrimRight(formatted, "0")
 	return strings.TrimRight(formatted, ".")
 }
