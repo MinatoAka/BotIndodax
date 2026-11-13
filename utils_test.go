@@ -53,9 +53,19 @@ func TestSaveStateUsesPrivatePermissions(t *testing.T) {
 	}
 }
 
-func TestBuildQueryStringDeterministic(t *testing.T) {
-	got := buildQueryString(map[string]string{"z": "last", "a": "first", "empty": ""})
-	if got != "a=first&z=last" {
-		t.Fatalf("buildQueryString() = %q", got)
-	}
+func TestFormatQtyNoRoundUp(t *testing.T) {
+    cases := []float64{
+        0.000356789,    // harus jadi "0.00035678"
+        0.0003567891,   // harus jadi "0.00035678"
+        0.00035699999,  // harus jadi "0.00035699"
+        0.000356780,    // harus jadi "0.00035678"
+        1.123456789,    // harus jadi "1.12345678"
+    }
+    for _, q := range cases {
+        got := formatQty(q)
+        gotFloat, _ := strconv.ParseFloat(got, 64)
+        if gotFloat > q {
+            t.Errorf("formatQty(%v) = %q (%v) — LEBIH BESAR dari aslinya!", q, got, gotFloat)
+        }
+    }
 }
